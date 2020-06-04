@@ -27,12 +27,15 @@ steps:
   displayName: 'Change working directory'
 
 - script: pip install -r requirements.txt
+  workingDirectory: src/slack
   displayName: 'Install requirements'
 
 - script: pylint
+  workingDirectory: src/slack
   displayName: 'Run linter'
 
 - script: pytest
+  workingDirectory: src/slack
   displayName: 'Run test'
 
 - task: Docker@1
