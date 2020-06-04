@@ -3,7 +3,7 @@
 Project Unicorn slack workspace app written with Python on Flask.
 
 ## Development Dependencies
-- [Python 3.x.](https://www.python.org/downloads/)
+- [Python 3.x.x](https://www.python.org/downloads/)
 - [Docker](https://docs.docker.com/desktop/#download-and-install)
 
 ## Quick Start
