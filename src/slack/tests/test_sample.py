@@ -7,7 +7,3 @@ def inc(value):
 def test_passes():
     """Sample passing test case"""
     assert inc(3) == 4
-
-def test_fails():
-    """Sample failing test case"""
-    assert inc(3) == 5
