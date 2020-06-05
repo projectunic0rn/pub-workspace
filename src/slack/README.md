@@ -39,7 +39,7 @@ $ docker rm -f pub-slack-workspace
 ```
 
 ## Linting
-[Guide](https://docs.pylint.org/en/1.6.0/tutorial.html) in understanding pylint. 
+[Guide](https://docs.pylint.org/en/1.6.0/tutorial.html) to pylint. 
 
 ## Testing
 Reference pytest [documentation](https://docs.pytest.org/en/5.4.3/index.html) for testing.
