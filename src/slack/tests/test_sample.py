@@ -1,6 +1,5 @@
 """Sample test module"""
 
-# TODO: Remove this file
 def inc(value):
     """Sample test function"""
     return value + 1
