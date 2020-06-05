@@ -18,6 +18,10 @@ $ pip3 install -r requirements.txt
 $ export FLASK_APP=app.py
 $ python3 -m flask run
 
+# Run linter
+$ cd src
+$ python3 -m pylint slack
+
 # Run tests
 $ pytest
 
