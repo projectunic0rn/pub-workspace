@@ -2,8 +2,9 @@
 ## Summary 
 Project Unicorn slack workspace app written with Python on Flask.
 
-## Python version
-- Python 3.x.x
+## Development Dependencies
+- [Python 3.x.x](https://www.python.org/downloads/)
+- [Docker](https://docs.docker.com/desktop/#download-and-install)
 
 ## Quick Start
 ```bash
@@ -24,5 +25,22 @@ $ pytest
 $ pip3 freeze > requirements.txt
 ```
 
+## Docker Development
+
+```bash
+# build docker image
+$ docker build -t pub-slack-workspace -f ci/slackworkspace.Dockerfile src/slack
+# run container
+$ docker run -d --name pub-slack-workspace -p 80:80 pub-slack-workspace
+# Direct browser to localhost port 80
+$ open http://localhost:80
+# Stop and remove container
+$ docker rm -f pub-slack-workspace
+```
+
+## Linting
+[Guide](https://docs.pylint.org/en/1.6.0/tutorial.html) to pylint. 
+
 ## Testing
 Reference pytest [documentation](https://docs.pytest.org/en/5.4.3/index.html) for testing.
+
