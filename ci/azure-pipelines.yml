@@ -23,15 +23,12 @@ steps:
 - script: python -m pip install --upgrade pip
   displayName: 'Install tools'
 
-- script: cd src/slack/
-  displayName: 'Change working directory'
-
 - script: pip install -r requirements.txt
   workingDirectory: src/slack
   displayName: 'Install requirements'
 
-- script: pylint
-  workingDirectory: src/slack
+- script: pylint slack
+  workingDirectory: src/
   displayName: 'Run linter'
 
 - script: pytest
@@ -47,7 +44,7 @@ steps:
   condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/tags/v')))
 
 - script: docker build -t roymoran/slack-workspace:build -f ci/slackworkspace.Dockerfile src/slack
-  displayName: 'build pub jobs docker image'
+  displayName: 'build slack workspace app image'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
     
 - script: docker push roymoran/slack-workspace:build
