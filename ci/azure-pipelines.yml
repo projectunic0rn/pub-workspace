@@ -13,6 +13,13 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    contents: '**/*'
+    targetFolder: $(Build.ArtifactStagingDirectory)
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/tags/v')))
+
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '3.8'
