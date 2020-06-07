@@ -35,7 +35,7 @@ $ pip3 freeze > requirements.txt
 # build docker image
 $ docker build -t pub-slack-workspace -f ci/slackworkspace.Dockerfile src/slack
 # run container
-$ docker run -d --name pub-slack-workspace -p 80:80 pub-slack-workspace
+$ docker run -d --name pub-slack-workspace -p 80:80 -e SLACK_SIGNING_SECRET=yourlocalslacksecret pub-slack-workspace
 # Direct browser to localhost port 80
 $ open http://localhost:80
 # Stop and remove container
