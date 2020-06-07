@@ -41,13 +41,17 @@ steps:
   workingDirectory: src/slack
   displayName: 'Install requirements'
 
-- script: pylint slack
+- script: pylint slack --ignore=tests
   workingDirectory: src/
   displayName: 'Run linter'
 
 - script: pytest
   workingDirectory: src/slack
-  displayName: 'Run test'
+  displayName: 'Run tests'
+
+- script: py.test --cov-report xml:coverage.xml --cov .
+  workingDirectory: src/slack
+  displayName: 'Generate coverage report'
 
 - task: Docker@1
   displayName: Container registry login
