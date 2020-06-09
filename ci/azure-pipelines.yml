@@ -60,7 +60,7 @@ steps:
     command: login
   condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/tags/v')))
 
-- script: docker build -t roymoran/slack-workspace:build -f ci/slackworkspace.Dockerfile src/slack
+- script: docker build -t roymoran/slack-workspace:build -f ci/slackworkspace.Dockerfile src/apps/slack
   displayName: 'build slack workspace app image'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
     
