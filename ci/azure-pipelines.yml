@@ -49,7 +49,7 @@ steps:
   displayName: 'Run tests'
 
 - script: py.test --cov-report xml:coverage.xml --cov .
-  workingDirectory: src/apps/slack
+  workingDirectory: src
   displayName: 'Generate coverage report'
 
 - task: Docker@1
