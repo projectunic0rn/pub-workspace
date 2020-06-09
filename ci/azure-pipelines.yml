@@ -38,19 +38,19 @@ steps:
   displayName: 'Install tools'
 
 - script: pip install -r requirements.txt
-  workingDirectory: src/slack
+  workingDirectory: src/apps/slack
   displayName: 'Install requirements'
 
 - script: pylint slack --ignore=tests
-  workingDirectory: src/
+  workingDirectory: src/apps
   displayName: 'Run linter'
 
 - script: pytest
-  workingDirectory: src/slack
+  workingDirectory: src/apps/slack
   displayName: 'Run tests'
 
 - script: py.test --cov-report xml:coverage.xml --cov .
-  workingDirectory: src/slack
+  workingDirectory: src/apps/slack
   displayName: 'Generate coverage report'
 
 - task: Docker@1

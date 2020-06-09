@@ -15,5 +15,9 @@ def events():
         event_data = request.get_json()
         if event_data["type"] == "url_verification":
             return event_data["challenge"]
-        return event_data["token"] # process event here
+        # entry = Entry()
+        # entry.process_message(event_data)
     return abort(400)
+
+def process_event(event_data) -> bool:
+    pass
