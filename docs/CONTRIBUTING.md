@@ -12,4 +12,4 @@ Currently tracking work through open issues. View them through the [issues tab](
 - Commit messages must be short and meaningful.
 - PRs must be opened against and up to date with master.
 - PRs must pass all checks.
-- PRs must link to issue via comment.
+- PRs should link to issue via comment.
