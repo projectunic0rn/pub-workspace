@@ -41,8 +41,7 @@ steps:
   workingDirectory: src/apps/slack
   displayName: 'Install requirements'
 
-- script: pylint slack --ignore=tests
-  workingDirectory: src/apps
+- script: pylint src --ignore=tests
   displayName: 'Run linter'
 
 - script: pytest

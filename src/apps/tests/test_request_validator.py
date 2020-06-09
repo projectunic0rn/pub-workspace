@@ -1,4 +1,4 @@
-from request_validator import RequestValidator
+from ..slack.request_validator import RequestValidator
 
 class TestRequestValidator:
     def test_hashcomputedsuccessfully_resultstrue(self):

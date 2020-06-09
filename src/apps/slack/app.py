@@ -18,6 +18,3 @@ def events():
         # entry = Entry()
         # entry.process_message(event_data)
     return abort(400)
-
-def process_event(event_data) -> bool:
-    pass
