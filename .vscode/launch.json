@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Python: Flask, Slack App",
-            "cwd": "${workspaceFolder}/src/slack",
+            "cwd": "${workspaceFolder}/src/apps/slack",
             "type": "python",
             "request": "launch",
             "module": "flask",
@@ -24,7 +24,7 @@
         },
         {
             "name": "Python: Flask, Discord App",
-            "cwd": "${workspaceFolder}/src/discord",
+            "cwd": "${workspaceFolder}/src/apps/discord",
             "type": "python",
             "request": "launch",
             "module": "flask",
