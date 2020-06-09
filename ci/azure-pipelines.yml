@@ -45,7 +45,7 @@ steps:
   displayName: 'Run linter'
 
 - script: pytest
-  workingDirectory: src/apps/slack
+  workingDirectory: src
   displayName: 'Run tests'
 
 - script: py.test --cov-report xml:coverage.xml --cov .
