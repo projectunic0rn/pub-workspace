@@ -8,8 +8,8 @@ Project Unicorn slack workspace app written with Python on Flask.
 
 ## Quick Start
 ```bash
-# navigate to slack directory
-$ cd src/slack
+# navigate to directory
+$ cd src/apps/slack
 
 # Install dependencies
 $ pip3 install -r requirements.txt
@@ -17,10 +17,6 @@ $ pip3 install -r requirements.txt
 # Run development server
 $ export FLASK_APP=app.py
 $ python3 -m flask run
-
-# Run linter
-$ cd src
-$ python3 -m pylint slack
 
 # Run tests
 $ pytest
@@ -44,6 +40,11 @@ $ docker rm -f pub-slack-workspace
 
 ## Linting
 [Guide](https://docs.pylint.org/en/1.6.0/tutorial.html) to pylint. 
+
+```bash
+# Run linter
+$ python3 -m pylint src --ignore=tests
+```
 
 ## Testing
 Reference pytest [documentation](https://docs.pytest.org/en/5.4.3/index.html) for testing.

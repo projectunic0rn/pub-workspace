@@ -41,6 +41,10 @@ steps:
   workingDirectory: src/apps/slack
   displayName: 'Install requirements'
 
+- script: pip install -r requirements.txt
+  workingDirectory: src/apps/discord
+  displayName: 'Install requirements'
+
 - script: pylint src --ignore=tests
   displayName: 'Run linter'
 
@@ -65,5 +69,13 @@ steps:
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
     
 - script: docker push roymoran/slack-workspace:build
+  displayName: 'push docker image'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+
+- script: docker build -t roymoran/discord-workspace:build -f ci/discordworkspace.Dockerfile src/apps/discord
+  displayName: 'build discord workspace app image'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
+    
+- script: docker push roymoran/discord-workspace:build
   displayName: 'push docker image'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
