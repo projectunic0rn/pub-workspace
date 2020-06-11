@@ -8,6 +8,7 @@ dataclasses = "*"
 typing = "*"
 flask = "*"
 request-validator = "*"
+"discord.py" = "*"
 
 [dev-packages]
 
