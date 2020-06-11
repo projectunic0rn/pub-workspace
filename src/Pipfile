@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+dataclasses = "*"
+typing = "*"
+flask = "*"
+request-validator = "*"
+"discord.py" = "*"
+slackclient = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
