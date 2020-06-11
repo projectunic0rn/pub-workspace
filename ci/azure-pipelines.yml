@@ -41,6 +41,10 @@ steps:
   workingDirectory: src/apps/slack
   displayName: 'Install requirements'
 
+- script: pip install -r requirements.txt
+  workingDirectory: src/apps/discord
+  displayName: 'Install requirements'
+
 - script: pylint src --ignore=tests
   displayName: 'Run linter'
 
