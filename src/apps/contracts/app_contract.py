@@ -1,3 +1,5 @@
+# pylint: disable-all
+# TODO: Remove pylint: disable-all
 from abc import ABC, abstractmethod
 
 # TODO: Have each app implement AppContract

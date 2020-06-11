@@ -38,3 +38,4 @@ class Entry: # pylint: disable=too-few-public-methods
     def process_channel_topic_change_event(self):
         """Message processor, map and forward data."""
         raise NotImplementedError
+    
