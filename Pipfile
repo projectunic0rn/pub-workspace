@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 dataclasses = "*"
 typing = "*"
+flask = "*"
+request-validator = "*"
 
 [dev-packages]
 
