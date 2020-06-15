@@ -1,5 +1,4 @@
 """Entry point for discord flask app."""
-import os
 from flask import Flask
 from discord_client import init_discord_client_on_thread
 

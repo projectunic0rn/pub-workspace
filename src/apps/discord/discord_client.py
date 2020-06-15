@@ -2,14 +2,12 @@
    Docs https://discordpy.readthedocs.io/en/latest/api.html
 """
 import os
-import discord
 import asyncio
 import threading
+import discord
 # from src.shared_core.entry import Entry
 
 # Consider exposing this bot install URL via http endpoint
-# prod: https://discord.com/api/oauth2/authorize?client_id=552733792188497921&permissions=3152&scope=bot
-# test: https://discord.com/api/oauth2/authorize?client_id=717379714456617032&permissions=3152&scope=bot
 # Permissions
 # Manage channels, View channels, Send messages, Add reactions
 client = discord.Client()
@@ -35,12 +33,15 @@ async def on_guild_join(guild):
     print('Guild join {0.name}'.format(guild))
 
 async def start():
+    """start discord client"""
     await client.start(os.environ['DISCORD_BOT_TOKEN']) # use client.start instead of client.run
 
 def loop_run(loop):
+    """utility method to for event loop"""
     loop.run_forever()
 
 def init_discord_client_on_thread():
+    """get event loop and start client on thread"""
     loop = asyncio.get_event_loop()
     loop.create_task(start())
 
