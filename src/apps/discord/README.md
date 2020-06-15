@@ -31,7 +31,7 @@ $ pip3 freeze > requirements.txt
 # build docker image
 $ docker build -t pub-discord-workspace -f ci/discordworkspace.Dockerfile src/apps/discord
 # run container
-$ docker run -d --name pub-discord-workspace -p 80:80 -e DISCORD_BOT_TOKEN=yourlocaldiscordbottoken pub-discord-workspace
+$ docker run -d --name pub-discord-workspace -p 80:80 -e WORKSPACES_CONNECTION_STRING=localconnectionstring -e DISCORD_BOT_TOKEN=yourlocaldiscordbottoken pub-discord-workspace
 # Direct browser to localhost port 80
 $ open http://localhost:80
 # Stop and remove container
