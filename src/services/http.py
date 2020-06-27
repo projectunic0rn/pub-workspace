@@ -1,0 +1,1 @@
+# TODO Fetch workspace types from pub api
