@@ -2,6 +2,7 @@
 import os
 from flask import Flask
 from src.apps.discord.discord_client import init_discord_client_on_thread
+
 # TODO: Add app logging for all apps
 def create_app():
     """Startuo method to initialize flask and

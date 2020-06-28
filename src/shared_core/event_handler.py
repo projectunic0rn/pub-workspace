@@ -7,6 +7,7 @@ from src.persistence.workspace_entity import WorkspaceEntity
 from src.services.workspace_service import WorkspaceService
 from src.shared_core.data_objects.workspace_message import WorkspaceMessage
 from src.shared_core.message_to_markdown import MessageToMarkdown
+from src.init_logger import InitLogger
 class EventHandler: # pylint: disable=too-few-public-methods
     """EventHandler reacts to events of interest
        for all workspace apps e.g. app install, message posted
@@ -14,22 +15,26 @@ class EventHandler: # pylint: disable=too-few-public-methods
     def __init__(self, workspace_services: WorkspaceService):
         self.workspace_services = workspace_services
         self.app_url = os.environ['APP_URL']
+        self.logger = InitLogger.instance()
 
     async def on_app_install(self, workspace_entity: WorkspaceEntity):
         """Message processor, map and forward data."""
-        print('in on_app_install')
         # Consider establishing session as part of events/requests received
         session = Session()
         workspace_service = self.workspace_services[workspace_entity.workspace_type]
         workspace_entity.generated_channel_name = 'dev-questions'
-        channel = await workspace_service.create_channel(workspace_entity)
+        try:
+            channel = await workspace_service.create_channel(workspace_entity)
+        except:
+            self.logger.critical('failed to install app')
+            raise
         workspace_entity.generated_channel_id = channel.id
         workspace_entity.generated_channel_name = channel.name
-        await workspace_service.set_channel_topic(f'Dedicated channel for sending messages across all project unicorn workspaces found on {self.app_url}/projects regardless of platform (e.g. slack/discord).\nUse this channel to ask for help or find collaborators on a challenge you\'re facing.', workspace_entity)
+        await workspace_service.set_channel_topic(f'Channel for sending cross-platform messages across all workspaces for projects posted on {self.app_url}/projects.\nUse this channel to ask for help or find collaborators on a challenge you\'re facing.', workspace_entity)
         session.add(workspace_entity)
         session.commit()
         session.close()
-        print('completed on on_app_install')
+        self.logger.info('proc')
     
     async def on_message_posted(self, workspace_message: WorkspaceMessage, session: Session):
         # Move message_to_markdown logic when we start sending

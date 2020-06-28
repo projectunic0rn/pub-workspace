@@ -8,13 +8,16 @@ import discord
 from src.shared_core.entry import Entry
 from src.services.discord_workspace_service import DiscordWorkspaceService
 from src.services.slack_workspace_service import SlackWorkspaceService
+from src.init_logger import InitLogger
+
 # from src.apps.contracts.app_contract import AppContract
 # Manage channels, View channels, Send messages, Add reactions
+discord_workspace = 'discord'
+logger = InitLogger.instance(discord_workspace, os.environ["APP_ENV"])
 client = discord.Client()
 workspace_services = {'slack': SlackWorkspaceService(), 'discord': DiscordWorkspaceService()}
 entry = Entry(workspace_services)
 discord_bot_id = os.environ['DISCORD_BOT_ID']
-discord_workspace = 'discord'
 
 @client.event
 async def on_ready():

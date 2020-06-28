@@ -3,6 +3,7 @@ import time
 import os
 import slack
 import asyncio
+import logging
 from flask import request, Flask, abort, redirect, Response
 from sqlalchemy.orm import Session
 from src.apps.slack.request_validator import RequestValidator
@@ -10,6 +11,12 @@ from src.shared_core.entry import Entry
 from src.services.slack_workspace_service import SlackWorkspaceService
 from src.services.discord_workspace_service import DiscordWorkspaceService
 from src.persistence.workspace_entity import WorkspaceEntity
+from src.init_logger import InitLogger
+
+slack_workspace = 'slack'
+logger = InitLogger.instance(slack_workspace, os.environ["APP_ENV"])
+logger.info(f'starting {slack_workspace} app')
+logger.critical(f'starting {slack_workspace} app')
 
 client_id = os.environ["SLACK_CLIENT_ID"]
 client_secret = os.environ["SLACK_CLIENT_SECRET"]
@@ -18,7 +25,6 @@ redirect_uri = os.environ["SLACK_REDIRECT_URI"]
 app = Flask(__name__)
 workspace_services = {'slack': SlackWorkspaceService(), 'discord': DiscordWorkspaceService()}
 entry = Entry(workspace_services)
-slack_workspace = 'slack'
 
 @app.route("/finish_auth", methods=["GET", "POST"])
 def post_install():
@@ -67,22 +73,30 @@ def info():
     }
 
 def event_resolver(event_data):
-
+    # handle message type event
     if event_data["event"]["type"] == "message":
         try:
+            # ignore event if posted by bot
             if event_data["event"]["bot_id"]:
                 return
         except KeyError:
-            # ignore bot message 
             print('posted by user, continue')
+    
+        try:
+            # skip message event if subtype is present
+            if event_data["event"]["subtype"]:
+                return
+        except KeyError:
+            print('not message subtype, continue')
 
         # Potential performance improvement here - we're querying for 
         # the slack username each time a message is posted since it
         # is not available from the event data
         session = Session()
         workspace = session.query(WorkspaceEntity).filter(WorkspaceEntity.generated_channel_id == event_data['event']['channel']).first()
-        if workspace is None: 
-            return
         session.close()
-        user_info = workspace_services[slack_workspace].get_user_info(event_data['event']['user'], workspace)
-        asyncio.run(entry.process_message_posted_event(event_data['event']['text'], event_data['event']['channel'], user_info['user']['profile']['display_name'], slack_workspace))
+        if workspace is None:
+            return
+        user_display_name = workspace_services[slack_workspace].get_user_display_name(event_data['event']['user'], workspace)
+        asyncio.run(entry.process_message_posted_event(event_data['event']['text'], event_data['event']['channel'], user_display_name, slack_workspace))
+        return

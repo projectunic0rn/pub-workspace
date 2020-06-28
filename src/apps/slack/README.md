@@ -32,7 +32,7 @@ $ pip3 freeze > requirements.txt
 $ docker build -t pub-slack-workspace -f ci/slackworkspace.Dockerfile .
 
 # run container
-$ docker run -d --name pub-slack-workspace -p 5001:80 -e SLACK_SIGNING_SECRET=signing_secret -e WORKSPACES_CONNECTION_STRING=connection_string DISCORD_BOT_TOKEN=yourlocaldiscordbottoken -e SLACK_SIGNING_SECRET=signing_secret -e SLACK_CLIENT_SECRET=client_secret -e SLACK_REDIRECT_URI=redirect_uri -e APP_URL=https://projectunicorn.net pub-slack-workspace
+$ docker run -d --name pub-slack-workspace -p 5001:80 -e SLACK_SIGNING_SECRET=signing_secret -e WORKSPACES_CONNECTION_STRING=connection_string DISCORD_BOT_TOKEN=yourlocaldiscordbottoken -e SLACK_SIGNING_SECRET=signing_secret -e SLACK_CLIENT_SECRET=client_secret -e SLACK_REDIRECT_URI=redirect_uri -e APP_URL=https://projectunicorn.net -e APP_ENV=staging pub-slack-workspace
 
 # Direct browser to localhost port 5000
 $ open http://localhost:5000
