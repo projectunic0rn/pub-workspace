@@ -19,7 +19,7 @@ def info():
     """app info"""
     return {
         'name': 'discord',
-        'version': '1.0.0',
+        'version': 'v0.0.7',
         # Permissions Manage channels, View channels, Send messages, Add reactions
         'install_url': f'https://discord.com/api/oauth2/authorize?\
             client_id={client_id}&\

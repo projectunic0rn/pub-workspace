@@ -73,7 +73,7 @@ def info():
     """app info"""
     return {
         'name': 'slack',
-        'version': '1.0.0',
+        'version': 'v0.0.7',
         'install_url': f'https://slack.com/oauth/v2/authorize?\
             client_id={client_id}&\
             scope=\
