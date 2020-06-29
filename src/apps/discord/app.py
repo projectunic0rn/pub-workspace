@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long
 """Entry point for discord flask app."""
 import os
 from flask import Flask
@@ -21,8 +22,5 @@ def info():
         'name': 'discord',
         'version': 'v0.0.7',
         # Permissions Manage channels, View channels, Send messages, Add reactions
-        'install_url': f'https://discord.com/api/oauth2/authorize?\
-            client_id={client_id}&\
-            permissions=3152&\
-            scope=bot',
+        'install_url': f'https://discord.com/api/oauth2/authorize?client_id={client_id}&permissions=3152&scope=bot',
     }
