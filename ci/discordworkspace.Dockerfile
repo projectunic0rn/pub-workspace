@@ -7,7 +7,9 @@ RUN curl "https://crt.sh/?d=2835394" > /usr/local/share/ca-certificates/rcert.cr
 RUN chmod 644 /usr/local/share/ca-certificates/rcert.crt && update-ca-certificates
 
 COPY ./ /app
+COPY ./src/apps/discord/uwsgi.ini /app
+
 RUN python -m pip install --upgrade pip
 
-COPY ./requirements.txt /var/www/requirements.txt
+COPY ./src/apps/discord/requirements.txt /var/www/requirements.txt
 RUN pip install -r /var/www/requirements.txt
