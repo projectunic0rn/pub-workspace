@@ -20,7 +20,7 @@ entry = Entry(workspace_services)
 class DiscordEventClient(discord.Client):
     async def on_ready(self):
         """Override on_ready, indicates client has connected to discord service"""
-        logger.info('Logged on as {0}!'.format(self.user))
+        logger.warn('Logged on as {0}!'.format(self.user))
 
     async def on_message(self, message):
         if message.author == self.user:

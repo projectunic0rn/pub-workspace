@@ -32,7 +32,7 @@ $ pip3 freeze > requirements.txt
 $ docker build -t pub-discord-workspace -f ci/discordworkspace.Dockerfile .
 
 # run container
-$ docker run -d --name pub-discord-workspace -p 5000:80 -e WORKSPACES_CONNECTION_STRING=localconnectionstring -e DISCORD_BOT_TOKEN=yourlocaldiscordbottoken DISCORD_CLIENT_ID=discordclientid -e APP_URL=https://projectunicorn.net -e APP_ENV=staging pub-discord-workspace
+$ docker run -d --name pub-discord-workspace -p 5000:80 -e WORKSPACES_CONNECTION_STRING=localconnectionstring -e DISCORD_BOT_TOKEN=yourlocaldiscordbottoken DISCORD_CLIENT_ID=discordclientid -e APP_URL=https://projectunicorn.net -e APP_ENV=development pub-discord-workspace
 
 # Direct browser to localhost port 5000
 $ open http://localhost:5000
