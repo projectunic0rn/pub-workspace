@@ -5,7 +5,6 @@ from src.shared_core.data_objects.workspace_channel import WorkspaceChannel
 from src.persistence.workspace_entity import WorkspaceEntity
 from src.init_logger import InitLogger
 class DiscordWorkspaceService(WorkspaceService):
-    # TODO Take care of potentially invalid permissions, test missing permissions
     def __init__(self):
         self.client = Client()
         self.is_bot = True

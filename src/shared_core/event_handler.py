@@ -34,7 +34,6 @@ class EventHandler: # pylint: disable=too-few-public-methods
         session.add(workspace_entity)
         session.commit()
         session.close()
-        self.logger.info('proc')
     
     async def on_message_posted(self, workspace_message: WorkspaceMessage, session: Session):
         # Move message_to_markdown logic when we start sending
@@ -44,13 +43,9 @@ class EventHandler: # pylint: disable=too-few-public-methods
         message = message_to_markdown.message
 
         workspace_channel_id = workspace_message.channel_id
-        print('in on_message_posted')
-        print(f'message: {message_to_markdown.message}')
-        print(f'workspace: {workspace_message.channel_id}')
         workspaces = session.query(WorkspaceEntity).all()
         string_workspace_channel_id = str(workspace_channel_id)
         for workspace in workspaces:
-            print(f'{workspace.generated_channel_id} == {string_workspace_channel_id}: {workspace.generated_channel_id == string_workspace_channel_id}')
             if workspace.generated_channel_id == string_workspace_channel_id:
                 continue
             workspace_service = self.workspace_services[workspace.workspace_type]

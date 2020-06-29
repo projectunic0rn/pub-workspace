@@ -31,9 +31,6 @@ steps:
   inputs:
     versionSpec: '3.8'
 
-- script: python --version
-  displayName: 'Python version'
-
 - script: python -m pip install --upgrade pip
   displayName: 'Install tools'
 

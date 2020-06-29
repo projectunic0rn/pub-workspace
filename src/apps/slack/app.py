@@ -42,8 +42,6 @@ def post_install():
       redirect_uri=redirect_uri
     )
 
-    print(response)
-    print(f'teamd_id: {response["team"]["id"]}, team_name {response["team"]["name"]}, token {response["access_token"]}')
     asyncio.run(entry.process_app_installed_event(slack_workspace, response['team']['id'], response['team']['name'], response['access_token']))
     return redirect(f'https://projectunicorn.net/oauth/?app={slack_workspace}')
 
@@ -53,7 +51,7 @@ def events():
     request_validator = RequestValidator()
     headers = request.headers
     data = request.get_data()
-    print(data)
+
     if request_validator.is_valid(headers, data, time.time()):
         event_data = request.get_json()
         if event_data["type"] == "url_verification":
@@ -80,14 +78,16 @@ def event_resolver(event_data):
             if event_data["event"]["bot_id"]:
                 return
         except KeyError:
-            print('posted by user, continue')
+            # fall through
+            pass
     
         try:
             # skip message event if subtype is present
             if event_data["event"]["subtype"]:
                 return
         except KeyError:
-            print('not message subtype, continue')
+            # fall through
+            pass
 
         # Potential performance improvement here - we're querying for 
         # the slack username each time a message is posted since it

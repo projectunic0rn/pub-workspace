@@ -7,7 +7,6 @@ from src.services.utility import Utility
 from src.init_logger import InitLogger
 
 class SlackWorkspaceService(WorkspaceService):
-    # TODO Take care of potentially invalid permissions, test missing permissions
     def __init__(self, token=""):
         self.client = WebClient(token=token)
         self.logger = InitLogger.instance()
