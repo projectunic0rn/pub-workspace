@@ -1,10 +1,7 @@
-from sqlalchemy import create_engine, Table, Column, Integer, String, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-import os
-from workspace_entity import WorkspaceEntity
-from db_config import Base
-
+"""Module allows to run operations on database"""
+from src.persistence.db_config import Base
 class Schema:
+    """Class for running operations on database"""
     def __init__(self):
         pass
         # connecting_string = os.environ['WORKSPACES_CONNECTION_STRING']
@@ -12,24 +9,25 @@ class Schema:
         # self.engine.execute('CREATE DATABASE pub_workspaces')
         # self.metadata = MetaData()
 
-    def create(self):
+    @classmethod
+    def create(cls):
+        """Create database schema"""
         Base.metadata.create_all()
-        return
 
-    def update(self):
-        # TODO: How do we handle migrations on existing production db? view sqlalchemy logs
+    @classmethod
+    def update(cls):
+        """Updatee database schema"""
         Base.metadata.create_all()
-        return    
 
-    def drop(self):
+    @classmethod
+    def drop(cls):
+        """Drop database schema and all data"""
         Base.metadata.drop_all()
-        return
 
     def seed(self):
-        pass
+        """Method to seed database with test data"""
 
     def create_if_not_exist(self):
-        pass
+        """Utility method to create db if does not exists"""
 
-schema = Schema()
-schema.drop()
+Schema.create()
