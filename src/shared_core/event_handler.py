@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long
 """Handle events from all apps independent of app
    workspace type e.g. slack, discord, etc
 """
@@ -31,11 +32,7 @@ class EventHandler: # pylint: disable=too-few-public-methods
             raise
         workspace_entity.generated_channel_id = channel.id
         workspace_entity.generated_channel_name = channel.name
-        await workspace_service.set_channel_topic(
-            f'Channel for sending cross-platform messages across all \
-            workspaces for projects posted on {self.app_url}/projects.\n\
-            Use this channel to ask for help or find collaborators on a \
-            challenge you\'re facing.', workspace_entity)
+        await workspace_service.set_channel_topic(f'Channel for sending cross-platform messages across all workspaces for projects posted on {self.app_url}/projects.\n Use this channel to ask for help or find collaborators on a challenge you\'re facing.', workspace_entity)
         session.add(workspace_entity)
         session.commit()
         session.close()
