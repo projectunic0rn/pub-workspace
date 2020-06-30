@@ -20,7 +20,7 @@ def info():
     """app info"""
     return {
         'name': 'discord',
-        'version': 'v0.0.8',
+        'version': 'v0.0.9',
         # Permissions Manage channels, View channels, Send messages, Add reactions
         'install_url': f'https://discord.com/api/oauth2/authorize?client_id={client_id}&permissions=3152&scope=bot',
     }

@@ -74,7 +74,7 @@ def info():
     """app info"""
     return {
         'name': 'slack',
-        'version': 'v0.0.8',
+        'version': 'v0.0.9',
         'install_url': f'https://slack.com/oauth/v2/authorize?client_id={client_id}&scope=channels:manage,channels:join,channels:read,chat:write,chat:write.customize,reactions:read,reactions:write,users:read&redirect_uri={redirect_uri}'
     }
 
