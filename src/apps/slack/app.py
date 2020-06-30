@@ -26,6 +26,11 @@ app = Flask(__name__)
 workspace_services = {'slack': SlackWorkspaceService(), 'discord': DiscordWorkspaceService()}
 entry = Entry(workspace_services)
 
+@app.route("/", methods=["GET"])
+def root():
+    """root index"""
+    return Response(status="200")
+
 @app.route("/finish_auth", methods=["GET", "POST"])
 def post_install():
     """Route to handle exchange of code for auth token"""
@@ -74,7 +79,7 @@ def info():
     """app info"""
     return {
         'name': 'slack',
-        'version': 'v0.0.9',
+        'version': 'v0.0.10',
         'install_url': f'https://slack.com/oauth/v2/authorize?client_id={client_id}&scope=channels:manage,channels:join,channels:read,chat:write,chat:write.customize,reactions:read,reactions:write,users:read&redirect_uri={redirect_uri}'
     }
 
