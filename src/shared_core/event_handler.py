@@ -42,6 +42,7 @@ class EventHandler: # pylint: disable=too-few-public-methods
            distribute messages to all workspaces."""
         # Move message_to_markdown logic when we start sending
         # messages to other channels
+        self.logger.debug(f"in {self.on_message_posted.__name__}")
         message_to_markdown = MessageToMarkdown(workspace_message.message)
         message_to_markdown.add_quote_block().add_author_signature(
             workspace_message.author, workspace_message.workspace_type)
