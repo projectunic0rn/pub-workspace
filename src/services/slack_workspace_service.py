@@ -1,4 +1,5 @@
 # pylint: disable=invalid-overridden-method
+# pylint: disable=line-too-long
 """Module for making slack api calls"""
 import string
 import random
@@ -31,8 +32,7 @@ class SlackWorkspaceService(WorkspaceService):
                   failed and raised error: {error.response['error']}")
                 self.logger.warning("attempting to rename")
                 response = self.client.conversations_create(
-                    name=f"{workspace_entity.generated_channel_name}-\
-                    {SlackWorkspaceService.substring_generator()}")
+                    name=f"{workspace_entity.generated_channel_name}-{SlackWorkspaceService.substring_generator()}")
                 channel_id = response['channel']['id']
                 channel_name = response['channel']['name']
             else:
@@ -95,6 +95,6 @@ class SlackWorkspaceService(WorkspaceService):
             return user_info['user']['profile']['display_name']
 
     @staticmethod
-    def substring_generator(size=3, chars=string.ascii_uppercase + string.digits):
+    def substring_generator(size=3, chars=string.ascii_lowercase + string.digits):
         """Generate random sequence of chars/nums"""
-        return ''.join(random.choice(chars) for _ in range(size)).lower()
+        return ''.join(random.choice(chars) for _ in range(size))
