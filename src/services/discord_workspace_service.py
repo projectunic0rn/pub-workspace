@@ -1,4 +1,5 @@
 # pylint: disable=invalid-overridden-method
+# pylint: disable=line-too-long
 """Module for making discord api calls"""
 import os
 from discord import Client, HTTPException
@@ -31,12 +32,10 @@ class DiscordWorkspaceService(WorkspaceService):
             guild = await self.get_guild(workspace_entity.workspace_id)
             channel = await guild.create_text_channel(workspace_entity.generated_channel_name)
         except HTTPException as error:
-            self.logger.critical(f"discord {self.create_channel.__name__} request \
-                failed for workspace {workspace_entity.id} and \
-                raised error: {error.text} (code {error.code})")
+            self.logger.critical(f"discord {self.create_channel.__name__} request failed for workspace {workspace_entity.id} and raised error: {error.text} (code {error.code})")
             raise error
         except:
-            self.logger.critical(f"unexpected discord failure {self.create_channel.__name__}s")
+            self.logger.critical(f"unexpected discord failure {self.create_channel.__name__}")
             self.logger.critical(f"inputs {workspace_entity.id}")
             raise
         else:
@@ -54,9 +53,7 @@ class DiscordWorkspaceService(WorkspaceService):
             channel = await self.get_channel(workspace_entity.generated_channel_id)
             await channel.edit(topic=channel_topic)
         except HTTPException as error:
-            self.logger.error(f"discord {self.set_channel_topic.__name__} request \
-                failed for workspace {workspace_entity.id} and \
-                raised error: {error.text} (code {error.code})")
+            self.logger.error(f"discord {self.set_channel_topic.__name__} request failed for workspace {workspace_entity.id} and raised error: {error.text} (code {error.code})")
             self.logger.error("skipping setting channel topic")
         await self.client.logout()
         self.logger.info("set discord channel topic")
@@ -68,9 +65,7 @@ class DiscordWorkspaceService(WorkspaceService):
             channel = await self.get_channel(workspace_entity.generated_channel_id)
             await channel.send(content=message)
         except HTTPException as error:
-            self.logger.error(f"discord {self.post_message.__name__} request \
-                failed for workspace {workspace_entity.id} and \
-                raised error: {error.text} (code {error.code})")
+            self.logger.error(f"discord {self.post_message.__name__} request failed for workspace {workspace_entity.id} and raised error: {error.text} (code {error.code})")
             self.logger.error("skipping message send and resuming as normal")
         await self.client.logout()
         self.logger.info("posted discord message")
