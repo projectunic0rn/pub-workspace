@@ -32,6 +32,7 @@ class Entry: # pylint: disable=too-few-public-methods
 
     async def process_message_posted_event(self, message_content, workspace_channel_id, message_author, workspace_type):
         """Message processor, map and forward data."""
+        self.logger.debug(f'in {self.process_message_posted_event.__name__}: {message_content}')
         session = Session()
         workspace = session.query(WorkspaceEntity).filter(
             WorkspaceEntity.generated_channel_id == workspace_channel_id).first()

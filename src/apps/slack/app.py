@@ -16,7 +16,6 @@ from src.init_logger import InitLogger
 SLACK_WORKSPACE = 'slack'
 logger = InitLogger.instance(SLACK_WORKSPACE, os.environ["APP_ENV"])
 logger.info(f'starting {SLACK_WORKSPACE} app')
-logger.critical(f'starting {SLACK_WORKSPACE} app')
 
 client_id = os.environ["SLACK_CLIENT_ID"]
 client_secret = os.environ["SLACK_CLIENT_SECRET"]
@@ -70,6 +69,7 @@ def events():
         if event_data["type"] == "url_verification":
             return event_data["challenge"]
         if event_data["type"] == "event_callback":
+            logger.debug(f'event_callback: {event_data}')
             event_resolver(event_data)
             return Response(status="200")
     return abort(400)
@@ -117,6 +117,7 @@ def event_resolver(event_data):
         slack_workspace_service = workspace_services[SLACK_WORKSPACE]
         user_display_name = slack_workspace_service.get_user_display_name(
             event_data['event']['user'], workspace)
+        logger.debug(f'fetched user running entry: {user_display_name}')
         asyncio.run(
             entry.process_message_posted_event(
                 event_data['event']['text'],
