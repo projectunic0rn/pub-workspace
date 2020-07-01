@@ -28,8 +28,7 @@ class SlackWorkspaceService(WorkspaceService):
                 name=workspace_entity.generated_channel_name)
         except SlackApiError as error:
             if error.response['error'] == "name_taken":
-                self.logger.warning(f"slack {self.create_channel.__name__} request \
-                  failed and raised error: {error.response['error']}")
+                self.logger.warning(f"slack {self.create_channel.__name__} request failed and raised error: {error.response['error']}")
                 self.logger.warning("attempting to rename")
                 response = self.client.conversations_create(
                     name=f"{workspace_entity.generated_channel_name}-{SlackWorkspaceService.substring_generator()}")
@@ -37,9 +36,7 @@ class SlackWorkspaceService(WorkspaceService):
                 channel_name = response['channel']['name']
             else:
                 self.logger.critical(
-                    f"slack {self.create_channel.__name__} request \
-                    failed for workspace {workspace_entity.id} and \
-                    raised error: {error.response['error']}")
+                    f"slack {self.create_channel.__name__} request failed for workspace {workspace_entity.id} and raised error: {error.response['error']}")
                 raise
         else:
             channel_id = response['channel']['id']
@@ -56,9 +53,7 @@ class SlackWorkspaceService(WorkspaceService):
                 channel=workspace_entity.generated_channel_id,
                 topic=channel_topic)
         except SlackApiError as error:
-            self.logger.warning(f"slack {self.set_channel_topic.__name__} request \
-            failed for workspace {workspace_entity.id} and \
-            raised error: {error.response['error']}")
+            self.logger.warning(f"slack {self.set_channel_topic.__name__} request failed for workspace {workspace_entity.id} and raised error: {error.response['error']}")
             self.logger.warning("skipping setting channel topic and resuming as normal")
         self.logger.info("set slack channel topic")
         return
@@ -71,9 +66,7 @@ class SlackWorkspaceService(WorkspaceService):
                 channel=workspace_entity.generated_channel_id,
                 text=message)
         except SlackApiError as error:
-            self.logger.warning(f"slack {self.post_message.__name__} request \
-                failed for workspace {workspace_entity.id} and \
-                raised error: {error.response['error']}")
+            self.logger.warning(f"slack {self.post_message.__name__} request failed for workspace {workspace_entity.id} and raised error: {error.response['error']}")
             self.logger.warning("skipping message send and resuming as normal")
         self.logger.info("posted slack message")
         return
@@ -86,9 +79,7 @@ class SlackWorkspaceService(WorkspaceService):
             user_info = self.client.users_info(user=user_id)
         except SlackApiError as error:
             # fallback on user_id as display name
-            self.logger.warning(f"slack {self.get_user_display_name.__name__} request \
-                failed for workspace {workspace_entity.id} and \
-                raised error: {error.response['error']}")
+            self.logger.warning(f"slack {self.get_user_display_name.__name__} request failed for workspace {workspace_entity.id} and raised error: {error.response['error']}")
             self.logger.warning("falling back to user_id as author")
             return display_name
         else:
