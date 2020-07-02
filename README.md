@@ -1,8 +1,8 @@
 # Pub Workspace
 ## Summary
-Pub workspace is a set of utility apps that can be installed on project workspaces where teams collaborate (e.g. slack, discord, etc.). Currently supported workspace platforms include Slack and Dicord. 
+Pub workspace is a set of utility apps that can be installed on project workspaces where teams collaborate (e.g. slack, discord, etc.). Currently supported workspace platforms include Slack and Discord. 
 
-Although we strive for feature parity across all workspace apps - they are dependent on the APIs supported by each platform.
+Although we strive for feature parity across all workspace apps - features are dependent on the APIs supported by each platform.
 
 ## Features
 
