@@ -80,7 +80,7 @@ def info():
     return {
         'name': 'slack',
         'version': 'v0.0.14',
-        'install_url': f'https://slack.com/oauth/v2/authorize?client_id={client_id}&scope=channels:manage,channels:join,channels:read,chat:write,chat:write.customize,reactions:read,reactions:write,users:read,channels:history&redirect_uri={redirect_uri}'
+        'installUrl': f'https://slack.com/oauth/v2/authorize?client_id={client_id}&scope=channels:manage,channels:join,channels:read,chat:write,chat:write.customize,reactions:read,reactions:write,users:read,channels:history&redirect_uri={redirect_uri}'
     }
 
 def event_resolver(event_data):
