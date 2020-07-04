@@ -27,5 +27,5 @@ def info():
         'name': 'discord',
         'version': 'v0.0.14',
         # Permissions Manage channels, View channels, Send messages, Add reactions
-        'install_url': f'https://discord.com/api/oauth2/authorize?client_id={client_id}&permissions=3152&scope=bot',
+        'installUrl': f'https://discord.com/api/oauth2/authorize?client_id={client_id}&permissions=3152&scope=bot',
     }
