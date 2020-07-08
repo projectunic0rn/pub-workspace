@@ -2,8 +2,6 @@
    Docs https://discordpy.readthedocs.io/en/latest/api.html
 """
 import os
-import asyncio
-import threading
 import discord
 from src.shared_core.entry import Entry
 from src.services.discord_workspace_service import DiscordWorkspaceService

@@ -1,1 +1,2 @@
-app_version = 'v0.0.16'
+"""defines app version constant"""
+APP_VERSION = 'v0.0.16'
