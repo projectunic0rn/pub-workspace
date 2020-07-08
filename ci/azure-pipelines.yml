@@ -76,3 +76,11 @@ steps:
 - script: docker push roymoran/discord-workspace:build
   displayName: 'push docker image'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
+
+- script: docker build -t roymoran/discord-workspace-bot:build -f ci/discordworkspacebot.Dockerfile .
+  displayName: 'build discord bot image'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
+    
+- script: docker push roymoran/discord-workspace-bot:build
+  displayName: 'push docker image'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
