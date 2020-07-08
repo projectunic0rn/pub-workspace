@@ -7,7 +7,7 @@ from src.shared_core.entry import Entry
 from src.services.discord_workspace_service import DiscordWorkspaceService
 from src.services.slack_workspace_service import SlackWorkspaceService
 from src.init_logger import InitLogger
-from src.apps.version import app_version
+from src.apps.version import APP_VERSION
 
 DISCORD_WORKSPACE = 'discord'
 logger = InitLogger.instance(DISCORD_WORKSPACE, os.environ["APP_ENV"])
@@ -18,7 +18,7 @@ class DiscordEventClient(discord.Client):
     """Class to handle events from discord"""
     async def on_ready(self):
         """Override on_ready, indicates client has connected"""
-        logger.warn(f'app version: {app_version}')
+        logger.warn(f'app version: {APP_VERSION}')
         logger.warn('Logged on as {0}!'.format(self.user))
 
     async def on_message(self, message):

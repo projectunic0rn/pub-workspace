@@ -6,7 +6,7 @@ import time
 import slack
 from flask import request, Flask, abort, redirect, Response
 from sqlalchemy.orm import Session
-from src.apps.version import app_version
+from src.apps.version import APP_VERSION
 from src.apps.slack.request_validator import RequestValidator
 from src.shared_core.entry import Entry
 from src.services.slack_workspace_service import SlackWorkspaceService
@@ -80,7 +80,7 @@ def info():
     """app info"""
     return {
         'name': 'slack',
-        'version': app_version,
+        'version': APP_VERSION,
         'installUrl': f'https://slack.com/oauth/v2/authorize?client_id={client_id}&scope=channels:manage,channels:join,channels:read,chat:write,chat:write.customize,reactions:read,reactions:write,users:read,channels:history&redirect_uri={redirect_uri}'
     }
 
