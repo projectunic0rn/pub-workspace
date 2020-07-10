@@ -67,4 +67,3 @@ def handle_app_install(event_data):
             event_data['team_name'],
             event_data['access_token'])
         )
-
