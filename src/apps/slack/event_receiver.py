@@ -15,6 +15,7 @@ queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name, idle_timeout=None) as receiver:
+        logger.info(f'listening for events')
         for msg in receiver:
             try:
                 data = json.loads(str(msg))
