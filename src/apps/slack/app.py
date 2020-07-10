@@ -1,30 +1,25 @@
 # pylint: disable=line-too-long
 """Entry point for flask app."""
-import asyncio
 import os
 import time
 import slack
+import json
 from flask import request, Flask, abort, redirect, Response
-from sqlalchemy.orm import Session
-from src.apps.version import APP_VERSION
+from src.apps.const import APP_VERSION, SLACK_WORKSPACE
 from src.apps.slack.request_validator import RequestValidator
-from src.shared_core.entry import Entry
-from src.services.slack_workspace_service import SlackWorkspaceService
-from src.services.discord_workspace_service import DiscordWorkspaceService
-from src.persistence.workspace_entity import WorkspaceEntity
 from src.init_logger import InitLogger
+from azure.servicebus import ServiceBusClient, Message
 
-SLACK_WORKSPACE = 'slack'
+connstr = os.environ['SERVICE_BUS_CONN_STR']
+queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+
 logger = InitLogger.instance(SLACK_WORKSPACE, os.environ["APP_ENV"])
-logger.info(f'starting {SLACK_WORKSPACE} app')
 
 client_id = os.environ["SLACK_CLIENT_ID"]
 client_secret = os.environ["SLACK_CLIENT_SECRET"]
 redirect_uri = os.environ["SLACK_REDIRECT_URI"]
-
+app_url = os.environ["APP_URL"]
 app = Flask(__name__)
-workspace_services = {'slack': SlackWorkspaceService(), 'discord': DiscordWorkspaceService()}
-entry = Entry(workspace_services)
 
 @app.route("/", methods=["GET"])
 def root():
@@ -48,15 +43,16 @@ def post_install():
         redirect_uri=redirect_uri
     )
 
-    asyncio.run(
-        entry.process_app_installed_event(
-            SLACK_WORKSPACE,
-            response['team']['id'],
-            response['team']['name'],
-            response['access_token'])
-        )
-    return redirect(
-        f'https://projectunicorn.net/oauth/?app={SLACK_WORKSPACE}')
+    event_data = {
+        'team_id': response['team']['id'],
+        'team_name': response['team']['name'],
+        'access_token': response['access_token'],
+        'event': {
+            'type': 'app_install'
+        }
+    }
+    queue_event(event_data)
+    return redirect(f'{app_url}/oauth/?app={SLACK_WORKSPACE}')
 
 @app.route("/events", methods=["POST"])
 def events():
@@ -71,7 +67,7 @@ def events():
             return event_data["challenge"]
         if event_data["type"] == "event_callback":
             logger.debug(f'event_callback: {event_data}')
-            event_resolver(event_data)
+            queue_event(event_data)
             return Response(status="200")
     return abort(400)
 
@@ -84,45 +80,9 @@ def info():
         'installUrl': f'https://slack.com/oauth/v2/authorize?client_id={client_id}&scope=channels:manage,channels:join,channels:read,chat:write,chat:write.customize,reactions:read,reactions:write,users:read,channels:history&redirect_uri={redirect_uri}'
     }
 
-def event_resolver(event_data):
-    """resolve and process event types - currently
-       only handles posted message
-    """
-    # handle message type event
-    if event_data["event"]["type"] == "message":
-        try:
-            # ignore event if posted by bot
-            if event_data["event"]["bot_id"]:
-                return
-        except KeyError:
-            # fall through
-            pass
-
-        try:
-            # skip message event if subtype is present
-            if event_data["event"]["subtype"]:
-                return
-        except KeyError:
-            # fall through
-            pass
-
-        # Potential performance improvement here - we're making an
-        # api request for the slack username each time a message
-        # is posted since it is not available from the event data
-        session = Session()
-        workspace = session.query(WorkspaceEntity).filter(
-            WorkspaceEntity.generated_channel_id == event_data['event']['channel']).first()
-        session.close()
-        if workspace is None:
-            return
-        slack_workspace_service = workspace_services[SLACK_WORKSPACE]
-        user_display_name = slack_workspace_service.get_user_display_name(
-            event_data['event']['user'], workspace)
-        logger.debug(f'fetched user running entry: {user_display_name}')
-        asyncio.run(
-            entry.process_message_posted_event(
-                event_data['event']['text'],
-                event_data['event']['channel'],
-                user_display_name,
-                SLACK_WORKSPACE))
-        return
+def queue_event(event_data):
+    data = json.dumps(event_data)
+    with ServiceBusClient.from_connection_string(connstr) as client:
+        with client.get_queue_sender(queue_name) as sender:
+            single_message = Message(data)
+            sender.send_messages(single_message)

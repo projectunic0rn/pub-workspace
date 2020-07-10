@@ -27,18 +27,31 @@ $ pip3 freeze > requirements.txt
 
 ## Docker Development
 
+### Web Service
 ```bash
 # build docker image
 $ docker build -t pub-discord-workspace -f ci/discordworkspace.Dockerfile .
 
-# run container
-$ docker run -d --name pub-discord-workspace -p 5000:80 -e WORKSPACES_CONNECTION_STRING=localconnectionstring -e DISCORD_BOT_TOKEN=yourlocaldiscordbottoken DISCORD_CLIENT_ID=discordclientid -e APP_URL=https://projectunicorn.net -e APP_ENV=development pub-discord-workspace
+# run container (provide your environment variables), service bus must be test instance running on azure
+$ docker run -d --name pub-discord-workspace -p 5000:80 -e DISCORD_CLIENT_ID=discordclientid pub-discord-workspace
 
 # Direct browser to localhost port 5000
 $ open http://localhost:5000
 
 # Stop and remove container
 $ docker rm -f pub-discord-workspace
+```
+
+### Discord App
+```bash
+# build docker image
+$ docker build -t pub-discord-workspace-bot -f ci/discordworkspace.Dockerfile .
+
+# run container (provide your environment variables), service bus must be test instance running on azure
+$ docker run -d --name pub-discord-workspace-bot -e WORKSPACES_CONNECTION_STRING=localconnectionstring -e DISCORD_BOT_TOKEN=yourlocaldiscordbottoken -e APP_URL=https://projectunicorn.net -e APP_ENV=development pub-discord-workspace-bot
+
+# Stop and remove container
+$ docker rm -f pub-discord-workspace-bot
 ```
 
 ## Linting

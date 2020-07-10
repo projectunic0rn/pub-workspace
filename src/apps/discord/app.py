@@ -2,7 +2,7 @@
 """Entry point for discord flask app."""
 import os
 from flask import Flask, Response
-from src.apps.version import APP_VERSION
+from src.apps.const import APP_VERSION
 
 client_id = os.environ['DISCORD_CLIENT_ID']
 app = Flask(__name__)
