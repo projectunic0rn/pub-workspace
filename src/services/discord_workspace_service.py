@@ -65,8 +65,8 @@ class DiscordWorkspaceService(WorkspaceService):
             channel = await self.get_channel(workspace_entity.generated_channel_id)
             await channel.send(content=message)
         except HTTPException as error:
-            self.logger.error(f"discord {self.post_message.__name__} request failed for workspace {workspace_entity.id} and raised error: {error.text} (code {error.code})")
-            self.logger.error("skipping message send and resuming as normal")
+            self.logger.warning(f"discord {self.post_message.__name__} request failed for workspace {workspace_entity.id} and raised error: {error.text} (code {error.code})")
+            self.logger.warning("skipping message send and resuming as normal")
         await self.client.logout()
         self.logger.info("posted discord message")
         return
