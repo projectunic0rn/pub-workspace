@@ -2,13 +2,13 @@
 """Entry point for flask app."""
 import os
 import time
-import slack
 import json
+import slack
+from azure.servicebus import ServiceBusClient, Message
 from flask import request, Flask, abort, redirect, Response
 from src.apps.const import APP_VERSION, SLACK_WORKSPACE
 from src.apps.slack.request_validator import RequestValidator
 from src.init_logger import InitLogger
-from azure.servicebus import ServiceBusClient, Message
 
 connstr = os.environ['SERVICE_BUS_CONN_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
@@ -81,6 +81,7 @@ def info():
     }
 
 def queue_event(event_data):
+    """send slack event data to service bus message queue"""
     data = json.dumps(event_data)
     with ServiceBusClient.from_connection_string(connstr) as client:
         with client.get_queue_sender(queue_name) as sender:

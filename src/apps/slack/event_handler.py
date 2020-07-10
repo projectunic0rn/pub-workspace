@@ -1,5 +1,6 @@
+# pylint: disable=line-too-long
+"""receive and forward slack events"""
 import asyncio
-from src.init_logger import InitLogger
 from sqlalchemy.orm import Session
 from src.persistence.workspace_entity import WorkspaceEntity
 from src.shared_core.entry import Entry
@@ -21,6 +22,7 @@ def resolve_event(event_data):
         handle_app_install(event_data)
 
 def handle_message_event(event_data):
+    """process new message posted to slack channel"""
     try:
         # ignore event if posted by bot
         if event_data["event"]["bot_id"]:
@@ -55,9 +57,9 @@ def handle_message_event(event_data):
             event_data['event']['channel'],
             user_display_name,
             SLACK_WORKSPACE))
-    return
 
 def handle_app_install(event_data):
+    """process new app installation"""
     asyncio.run(
         entry.process_app_installed_event(
             SLACK_WORKSPACE,
