@@ -7,7 +7,7 @@ from src.shared_core.entry import Entry
 from src.services.discord_workspace_service import DiscordWorkspaceService
 from src.services.slack_workspace_service import SlackWorkspaceService
 from src.init_logger import InitLogger
-from src.apps.version import APP_VERSION
+from src.apps.const import APP_VERSION
 
 DISCORD_WORKSPACE = 'discord'
 logger = InitLogger.instance(DISCORD_WORKSPACE, os.environ["APP_ENV"])

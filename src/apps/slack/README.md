@@ -27,18 +27,31 @@ $ pip3 freeze > requirements.txt
 
 ## Docker Development
 
+### Web Service
 ```bash
 # build docker image
 $ docker build -t pub-slack-workspace -f ci/slackworkspace.Dockerfile .
 
-# run container
-$ docker run -d --name pub-slack-workspace -p 5001:80 -e SLACK_SIGNING_SECRET=signing_secret -e WORKSPACES_CONNECTION_STRING=connection_string DISCORD_BOT_TOKEN=yourlocaldiscordbottoken -e SLACK_SIGNING_SECRET=signing_secret -e SLACK_CLIENT_SECRET=client_secret -e SLACK_REDIRECT_URI=redirect_uri -e APP_URL=https://projectunicorn.net -e APP_ENV=development pub-slack-workspace
+# run container (provide your environment variables), service bus must be test instance running on azure
+$ docker run -d --name pub-slack-workspace -p 5001:80 -e SLACK_SIGNING_SECRET=signing_secret -e SLACK_CLIENT_ID=client_id -e SLACK_CLIENT_SECRET=client_secret -e SLACK_REDIRECT_URI=redirect_uri -e APP_URL=https://projectunicorn.net -e APP_ENV=development -e SERVICE_BUS_CONN_STR=bus_connection_string -e SERVICE_BUS_QUEUE_NAME=queue_name pub-slack-workspace 
 
-# Direct browser to localhost port 5000
-$ open http://localhost:5000
+# Confirm running by visitng 
+$ open http://localhost:5001/info
 
 # Stop and remove container
 $ docker rm -f pub-slack-workspace
+```
+
+### Slack App
+```bash
+# build docker image
+$ docker build -t pub-slack-workspace-bot -f ci/slackworkspacebot.Dockerfile .
+
+# run container (provide your environment variables), service bus must be test instance running on azure
+$ docker run -d --name pub-slack-workspace-bot -e WORKSPACES_CONNECTION_STRING=connection_string DISCORD_BOT_TOKEN=yourlocaldiscordbottoken -e APP_URL=https://projectunicorn.net -e APP_ENV=development -e SERVICE_BUS_CONN_STR=bus_connection_string -e SERVICE_BUS_QUEUE_NAME=queue_name pub-slack-workspace-bot
+
+# Stop and remove container
+$ docker rm -f pub-slack-workspace-bot
 ```
 
 ## Linting

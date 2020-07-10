@@ -20,7 +20,7 @@ class InitLogger:
         """Set/Get instance of logger"""
         if cls._instance is None:
             cls._instance = cls.__new__(cls)
-            log_level = logging.WARNING if app_env == 'production' else logging.DEBUG
+            log_level = logging.WARNING if app_env == 'production' else logging.INFO
             # create logger
             logger = logging.getLogger(name)
             logger.setLevel(log_level)
