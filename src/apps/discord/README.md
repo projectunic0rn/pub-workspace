@@ -45,7 +45,7 @@ $ docker rm -f pub-discord-workspace
 ### Discord App
 ```bash
 # build docker image
-$ docker build -t pub-discord-workspace-bot -f ci/discordworkspace.Dockerfile .
+$ docker build -t pub-discord-workspace-bot -f ci/discordworkspacebot.Dockerfile .
 
 # run container (provide your environment variables)
 $ docker run -d --name pub-discord-workspace-bot -e WORKSPACES_CONNECTION_STRING=localconnectionstring -e DISCORD_BOT_TOKEN=yourlocaldiscordbottoken -e APP_URL=https://projectunicorn.net -e APP_ENV=development pub-discord-workspace-bot
