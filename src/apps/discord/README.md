@@ -11,12 +11,13 @@ Project Unicorn discord workspace app written with Python on Flask and discord.p
 
 ## Docker Development
 
-[Create a test app](https://discord.com/developers/applications). Once created, update DISCORD_BOT_TOKEN and DISCORD_CLIENT_ID [docker-compose file](../../../ci/docker-compose.env)
+[Create a test app](https://discord.com/developers/applications). Once created, copy/paste the [docker-compose.env.example](../../../ci/docker-compose.env.example) 
+and rename the new file to `docker-compose.env` (removing .example). Then change the variables to your own application properties.
 
 ```bash
 # from repo root
 # docker compose up
-$ docker-compose --file ci/docker-compose.yml up
+$ docker-compose --file ci/docker-compose.yml up -d
 
 # on very first run, execute db schema.py to setup db
 $ docker exec -it pub-discord-workspace-bot python3 -m src.persistence.schema schema.py
