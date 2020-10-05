@@ -1,5 +1,8 @@
+# pylint: disable=unused-import
 """Module allows to run operations on database"""
 from src.persistence.db_config import Base
+from src.persistence.workspace_entity import WorkspaceEntity
+
 class Schema:
     """Class for running operations on database"""
     def __init__(self):

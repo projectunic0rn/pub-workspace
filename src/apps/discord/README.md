@@ -1,60 +1,37 @@
 # Discord App
-## Summary 
-Project Unicorn discord workspace app written with Python on Flask and discord.py client library.
+
+## Summary
+
+Project Unicorn discord workspace app written with Python on Flask and discord.py client library, supported by mysql data store.
 
 ## Development Dependencies
+
 - [Python 3.x.x](https://www.python.org/downloads/)
-- [Docker](https://docs.docker.com/desktop/#download-and-install)
-
-## Quick Start
-```bash
-# navigate to directory
-$ cd src/apps/discord
-
-# Install dependencies
-$ pip3 install -r requirements.txt
-
-# Run development server
-$ export FLASK_APP=app.py
-$ python3 -m flask run
-
-# Run tests
-$ pytest
-
-# If new dependency installed, update requirements.txt
-$ pip3 freeze > requirements.txt
-```
+- [Docker Engine 19.03.0+](https://docs.docker.com/desktop/#download-and-install)
 
 ## Docker Development
 
-### Web Service
+[Create a test app](https://discord.com/developers/applications). Once created, update DISCORD_BOT_TOKEN and DISCORD_CLIENT_ID [docker-compose file](../../../ci/docker-compose.env)
+
 ```bash
-# build docker image
-$ docker build -t pub-discord-workspace -f ci/discordworkspace.Dockerfile .
+# from repo root
+# docker compose up
+$ docker-compose --file ci/docker-compose.yml up
 
-# run container (provide your environment variables)
-$ docker run -d --name pub-discord-workspace -p 5000:80 -e DISCORD_CLIENT_ID=discordclientid pub-discord-workspace
+# on very first run, execute db schema.py to setup db
+$ docker exec -it pub-discord-workspace-bot python3 -m src.persistence.schema schema.py
 
-# Direct browser to localhost port 5000
-$ open http://localhost:5000
+# find install link, and install app to a test workspace
+$ open http://localhost:8002/info
 
-# Stop and remove container
-$ docker rm -f pub-discord-workspace
+# rebuild images on changes
+$ docker-compose --file ci/docker-compose.yml build
 ```
 
-### Discord App
-```bash
-# build docker image
-$ docker build -t pub-discord-workspace-bot -f ci/discordworkspacebot.Dockerfile .
-
-# run container (provide your environment variables)
-$ docker run -d --name pub-discord-workspace-bot -e WORKSPACES_CONNECTION_STRING=localconnectionstring -e DISCORD_BOT_TOKEN=yourlocaldiscordbottoken -e APP_URL=https://projectunicorn.net -e APP_ENV=development pub-discord-workspace-bot
-
-# Stop and remove container
-$ docker rm -f pub-discord-workspace-bot
-```
+You can use mysql cli or [mysql workbench](https://www.mysql.com/products/workbench/) to interface with docker instance of mysql.
 
 ## Linting
+
 [Guide](https://docs.pylint.org/en/1.6.0/tutorial.html) to pylint.
 
 ```bash
@@ -63,5 +40,10 @@ $ python3 -m pylint src --ignore=tests
 ```
 
 ## Testing
-Reference pytest [documentation](https://docs.pytest.org/en/5.4.3/index.html) for testing.
 
+```bash
+# Run tests
+$ pytest
+```
+
+Reference pytest [documentation](https://docs.pytest.org/en/5.4.3/index.html) for testing.
