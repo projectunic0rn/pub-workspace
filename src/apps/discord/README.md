@@ -17,7 +17,7 @@ and rename the new file to `docker-compose.env` (removing .example). Then change
 ```bash
 # from repo root
 # docker compose up
-$ docker-compose --file ci/docker-compose.yml up
+$ docker-compose --file ci/docker-compose.yml up -d
 
 # on very first run, execute db schema.py to setup db
 $ docker exec -it pub-discord-workspace-bot python3 -m src.persistence.schema schema.py
