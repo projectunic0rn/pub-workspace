@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  discordbot:
+    container_name: pub-discord-workspace-bot
+    restart: always
+    build:
+      context: ../
+      dockerfile: ci/discordworkspacebot.Dockerfile
+    environment:
+      - DISCORD_BOT_TOKEN=change
+      - APP_URL=https://projectunicorn.net
+      - APP_ENV=development
+      - WORKSPACES_CONNECTION_STRING=mysql+mysqldb://root:rootpass@db:3306/pub_workspaces?ssl=true
+    depends_on:
+      - db
+  db:
+    image: mysql:5.7
+    container_name: pub-mysql
+    ports:
+      - 8001:3306
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: pub_workspaces
