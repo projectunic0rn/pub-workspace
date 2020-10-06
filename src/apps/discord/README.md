@@ -2,7 +2,7 @@
 
 ## Summary
 
-Project Unicorn discord workspace app written with Python on Flask and discord.py client library, supported by mysql data store.
+Project Unicorn discord workspace app written with Python on Flask and [discord.py](https://discordpy.readthedocs.io/en/latest/api.html) client library, supported by mysql data store.
 
 ## Development Dependencies
 
