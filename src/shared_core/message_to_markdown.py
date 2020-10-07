@@ -7,6 +7,7 @@ class MessageToMarkdown:
     def add_quote_block(self):
         """Prepend '>' character to message"""
         self.message = f'> {self.message}'
+        self.message = self.message.replace("\n", "\n> ")
         return self
 
     def add_author_signature(self, message_author, workspace_type):
