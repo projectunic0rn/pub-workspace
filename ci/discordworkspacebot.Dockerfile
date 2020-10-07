@@ -7,5 +7,3 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
-
-ENTRYPOINT [ "python", "-m", "src.apps.discord.discord_client.py" ]

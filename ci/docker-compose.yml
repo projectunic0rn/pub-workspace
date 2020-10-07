@@ -20,6 +20,9 @@ services:
       - APP_URL=https://projectunicorn.net
       - APP_ENV=development
       - WORKSPACES_CONNECTION_STRING=mysql+mysqldb://root:rootpass@db:3306/pub_workspaces?ssl=true
+    volumes:
+    - ../src:/usr/src/app/src
+    command: python -m src.apps.discord.discord_client.py
     depends_on:
       - db
   db:
