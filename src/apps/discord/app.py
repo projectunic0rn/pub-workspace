@@ -25,4 +25,5 @@ def info():
 
 @app.route("/finish_auth", methods=["POST"])
 def post_install():
+    """finalize installation of discord app"""
     return Response(status="200")
