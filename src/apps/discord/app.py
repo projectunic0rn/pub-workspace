@@ -20,7 +20,7 @@ def info():
         'name': 'discord',
         'version': APP_VERSION,
         # Permissions Manage channels, View channels, Send messages, Add reactions
-        'installUrl': f'https://discord.com/api/oauth2/authorize?client_id={client_id}&permissions=3152&scope=bot&redirect_uri={redirect_uri}',
+        'installUrl': f'https://discord.com/api/oauth2/authorize?client_id={client_id}&permissions=3152&scope=bot%20identify&redirect_uri={redirect_uri}&response_type=code',
     }
 
 @app.route("/finish_auth", methods=["POST"])
