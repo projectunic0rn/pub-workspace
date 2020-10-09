@@ -110,6 +110,10 @@ env.bak/
 venv.bak/
 docker-compose.env
 
+# MySQL
+ci/mysql/*
+!ci/mysql/.gitkeep
+
 # Spyder project settings
 .spyderproject
 .spyproject

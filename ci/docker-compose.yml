@@ -20,14 +20,18 @@ services:
       - APP_URL=https://projectunicorn.net
       - APP_ENV=development
       - WORKSPACES_CONNECTION_STRING=mysql+mysqldb://root:rootpass@db:3306/pub_workspaces?ssl=true
+    volumes:
+    - ../src:/usr/src/app/src
     depends_on:
       - db
   db:
-    image: mysql:5.7
+    image: mysql:5.7.16
     container_name: pub-mysql
     ports:
       - 8001:3306
     command: --default-authentication-plugin=mysql_native_password
+    volumes:
+    - ./mysql:/var/lib/mysql
     restart: 'no'
     environment:
       MYSQL_ROOT_PASSWORD: rootpass

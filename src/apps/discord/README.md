@@ -27,6 +27,9 @@ $ open http://localhost:8002/info
 
 # rebuild images on changes
 $ docker-compose --file ci/docker-compose.yml build
+
+# when done
+$ docker-compose --file ci/docker-compose.yml down
 ```
 
 You can use mysql cli or [mysql workbench](https://www.mysql.com/products/workbench/) to interface with docker instance of mysql.
