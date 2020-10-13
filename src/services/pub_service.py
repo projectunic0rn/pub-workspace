@@ -1,9 +1,8 @@
-import os
-from src.services.http import HttpClient
-from src.services.response_objects.project import Project
 """Module that defines service class for
    making requests to the pub api
 """
+import os
+from src.services.http import HttpClient
 
 
 class PubService:
@@ -17,7 +16,7 @@ class PubService:
             'X-Api-Key': os.environ['PUB_API_TOKEN'], 'Content-Type': 'application/json'}
         self.client = HttpClient(self.headers)
 
-    def get_project(self, project_id) -> Project:
+    def get_project(self, project_id):
         """method for fetching project"""
         project = self.client.get(f'{self.pub_endpoint}/projects/{project_id}')
         return project

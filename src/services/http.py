@@ -1,5 +1,5 @@
-import requests
 """Module to make http requests to external services"""
+import requests
 
 
 class HttpClient:
@@ -9,7 +9,6 @@ class HttpClient:
 
     def __init__(self, headers):
         self.headers = headers
-        pass
 
     def get(self, endpoint):
         """http get method"""
