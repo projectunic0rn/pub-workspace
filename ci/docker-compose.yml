@@ -9,6 +9,13 @@ services:
     build:
       context: ../
       dockerfile: ci/discordworkspace.Dockerfile
+    environment:
+      - DISCORD_REDIRECT_URI=http://localhost:8000/oauth/
+      - PUB_API_ENDPOINT=https://host.docker.internal:5001/api
+      - WORKSPACES_CONNECTION_STRING=mysql+mysqldb://root:rootpass@db:3306/pub_workspaces?ssl=true
+      - APP_URL=https://projectunicorn.net
+      - APP_ENV=development
+      - FLASK_ENV=development
   discordbot:
     container_name: pub-discord-workspace-bot
     env_file: docker-compose.env
@@ -20,6 +27,7 @@ services:
       - APP_URL=https://projectunicorn.net
       - APP_ENV=development
       - WORKSPACES_CONNECTION_STRING=mysql+mysqldb://root:rootpass@db:3306/pub_workspaces?ssl=true
+      - PUB_API_ENDPOINT=https://host.docker.internal:5001/api
     volumes:
     - ../src:/usr/src/app/src
     depends_on:
@@ -36,4 +44,3 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: pub_workspaces
-  
