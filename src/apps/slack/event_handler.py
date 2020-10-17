@@ -70,6 +70,6 @@ def handle_app_install(event_data):
             event_data['project_id'],
             event_data['access_token'],
             token_type=event_data['token_type'],
-            scope=event_data['scope'], 
+            scope=event_data['scope'],
             username=username)
     )

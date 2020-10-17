@@ -71,7 +71,7 @@ class SlackWorkspaceService(WorkspaceService):
         self.logger.info("posted slack message")
         return
 
-    def get_username(self, auth_token, user_id):
+    def get_username(self, auth_token, user_id=None):
         """Get display name of slack user"""
         self.set_client_token(auth_token)
         display_name = user_id

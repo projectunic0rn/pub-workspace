@@ -1,7 +1,6 @@
 # pylint: disable=line-too-long
 """Entry point for discord flask app."""
 import os
-import requests
 import asyncio
 from datetime import datetime, timedelta
 from flask import request, Flask, Response
@@ -11,9 +10,8 @@ from src.services.slack_workspace_service import SlackWorkspaceService
 from src.services.discord_workspace_service import DiscordWorkspaceService
 from src.shared_core.entry import Entry
 
-client_id = os.environ['DISCORD_CLIENT_ID']
-client_secret = os.environ['DISCORD_CLIENT_SECRET']
-redirect_uri = os.environ["DISCORD_REDIRECT_URI"]
+CLIENT_ID = os.environ['DISCORD_CLIENT_ID']
+REDIRECT_URI = os.environ["DISCORD_REDIRECT_URI"]
 workspace_services = {SLACK_WORKSPACE: SlackWorkspaceService(
 ), DISCORD_WORKSPACE: DiscordWorkspaceService()}
 entry = Entry(workspace_services)
@@ -34,7 +32,7 @@ def info():
         'name': 'discord',
         'version': APP_VERSION,
         # Permissions Manage channels, View channels, Send messages, Add reactions
-        'installUrl': f'https://discord.com/api/oauth2/authorize?client_id={client_id}&permissions=3152&scope=bot%20identify&redirect_uri={redirect_uri}&response_type=code',
+        'installUrl': f'https://discord.com/api/oauth2/authorize?client_id={CLIENT_ID}&permissions=3152&scope=bot%20identify&redirect_uri={REDIRECT_URI}&response_type=code',
     }
 
 

@@ -84,6 +84,6 @@ class EventHandler:  # pylint: disable=too-few-public-methods
            on workspace entity
         """
         if workspace_entity.username != "":
-            return
+            return workspace_entity.username
         workspace_service = self.workspace_services[workspace_entity.workspace_type]
         return workspace_service.get_username(workspace_entity.auth_token)

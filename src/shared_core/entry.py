@@ -1,4 +1,5 @@
 # pylint: disable=line-too-long
+# pylint: disable=too-many-arguments
 """Entrypoint for apps into shared core module"""
 from datetime import datetime
 from sqlalchemy.orm import Session

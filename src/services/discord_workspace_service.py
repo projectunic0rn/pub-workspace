@@ -1,8 +1,8 @@
 # pylint: disable=invalid-overridden-method
 # pylint: disable=line-too-long
+# pylint: disable=too-many-instance-attributes
 """Module for making discord api calls"""
 import os
-import requests
 from discord import Client, HTTPException
 from src.services.http import HttpClient
 from src.apps.const import DISCORD_API_ENDPOINT
@@ -23,11 +23,11 @@ class DiscordWorkspaceService(WorkspaceService):
         self.is_bot = True
         self.logger = InitLogger.instance()
         self.headers = {'Content-Type': 'application/json',
-                        'Authorization': f''}
+                        'Authorization': ''}
         self.http_client = HttpClient()
         self.api_endpoint = DISCORD_API_ENDPOINT
 
-    def get_username(self, auth_token):
+    def get_username(self, auth_token, user_id=None):
         """Get a discord server given server id"""
         self.headers['Authorization'] = f'Bearer {auth_token}'
         user = self.http_client.get(
@@ -82,6 +82,7 @@ class DiscordWorkspaceService(WorkspaceService):
         return
 
     async def post_message(self, message, workspace_entity: WorkspaceEntity):
+        """Post message to discord channel"""
         await self.client.login(os.environ['DISCORD_BOT_TOKEN'], bot=self.is_bot)
         try:
             channel = await self.get_channel(workspace_entity.generated_channel_id)
@@ -95,6 +96,7 @@ class DiscordWorkspaceService(WorkspaceService):
         return
 
     def exchange_code(self, code):
+        """Exchange code for access token"""
         data = {
             'client_id': self.client_id,
             'client_secret': self.client_secret,
@@ -113,6 +115,7 @@ class DiscordWorkspaceService(WorkspaceService):
         return access_token
 
     def refresh_token(self, refresh_token):
+        """Refresh access token once expired."""
         data = {
             'client_id': self.client_id,
             'client_secret': self.client_secret,

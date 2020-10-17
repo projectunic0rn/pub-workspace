@@ -6,7 +6,7 @@ from src.services.http import HttpClient
 
 
 class PubService:
-    """Class that defines valid methods for interacting 
+    """Class that defines valid methods for interacting
        with pub api
     """
 

@@ -26,7 +26,7 @@ class WorkspaceEntity(Base):
         token_expiration: {self.token_expiration}, \
         scope: {self.scope}, \
         created_on: {self.created_on} \
-        updated_on: {self.updated_on})' 
+        updated_on: {self.updated_on})'
 
     __tablename__ = 'workspaces'
 

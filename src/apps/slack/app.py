@@ -6,7 +6,7 @@ import json
 import slack
 from azure.servicebus import ServiceBusClient, Message
 from flask_cors import CORS
-from flask import request, Flask, abort, redirect, Response
+from flask import request, Flask, abort, Response
 from src.apps.const import APP_VERSION, SLACK_WORKSPACE
 from src.apps.slack.request_validator import RequestValidator
 from src.init_logger import InitLogger
@@ -16,10 +16,10 @@ queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 logger = InitLogger.instance(SLACK_WORKSPACE, os.environ["APP_ENV"])
 
-client_id = os.environ["SLACK_CLIENT_ID"]
-client_secret = os.environ["SLACK_CLIENT_SECRET"]
-redirect_uri = os.environ["SLACK_REDIRECT_URI"]
-scope = 'channels:manage,channels:join,channels:read,chat:write,chat:write.customize,reactions:read,reactions:write,users:read,channels:history'
+CLIENT_ID = os.environ["SLACK_CLIENT_ID"]
+CLIENT_SECRET = os.environ["SLACK_CLIENT_SECRET"]
+REDIRECT_URI = os.environ["SLACK_REDIRECT_URI"]
+SCOPE = 'channels:manage,channels:join,channels:read,chat:write,chat:write.customize,reactions:read,reactions:write,users:read,channels:history'
 app = Flask(__name__)
 CORS(app)
 
@@ -40,10 +40,10 @@ def post_install():
 
     # Request the auth tokens from Slack
     response = client.oauth_v2_access(
-        client_id=client_id,
-        client_secret=client_secret,
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
         code=auth_code,
-        redirect_uri=redirect_uri
+        redirect_uri=REDIRECT_URI
     )
 
     event_data = {
@@ -84,7 +84,7 @@ def info():
     return {
         'name': 'slack',
         'version': APP_VERSION,
-        'installUrl': f'https://slack.com/oauth/v2/authorize?client_id={client_id}&scope={scope}&redirect_uri={redirect_uri}'
+        'installUrl': f'https://slack.com/oauth/v2/authorize?client_id={CLIENT_ID}&scope={SCOPE}&redirect_uri={REDIRECT_URI}'
     }
 
 def queue_event(event_data):
