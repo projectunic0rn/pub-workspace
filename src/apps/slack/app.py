@@ -5,7 +5,8 @@ import time
 import json
 import slack
 from azure.servicebus import ServiceBusClient, Message
-from flask import request, Flask, abort, redirect, Response
+from flask_cors import CORS
+from flask import request, Flask, abort, Response
 from src.apps.const import APP_VERSION, SLACK_WORKSPACE
 from src.apps.slack.request_validator import RequestValidator
 from src.init_logger import InitLogger
@@ -15,11 +16,12 @@ queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 logger = InitLogger.instance(SLACK_WORKSPACE, os.environ["APP_ENV"])
 
-client_id = os.environ["SLACK_CLIENT_ID"]
-client_secret = os.environ["SLACK_CLIENT_SECRET"]
-redirect_uri = os.environ["SLACK_REDIRECT_URI"]
-app_url = os.environ["APP_URL"]
+CLIENT_ID = os.environ["SLACK_CLIENT_ID"]
+CLIENT_SECRET = os.environ["SLACK_CLIENT_SECRET"]
+REDIRECT_URI = os.environ["SLACK_REDIRECT_URI"]
+SCOPE = 'channels:manage,channels:join,channels:read,chat:write,chat:write.customize,reactions:read,reactions:write,users:read,channels:history'
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/", methods=["GET"])
 def root():
@@ -31,28 +33,33 @@ def post_install():
     """Route to handle exchange of code for auth token"""
     # Retrieve the auth code from the request params
     auth_code = request.args['code']
+    project = request.args['project']
 
     # An empty string is a valid token for this request
     client = slack.WebClient(token="")
 
     # Request the auth tokens from Slack
     response = client.oauth_v2_access(
-        client_id=client_id,
-        client_secret=client_secret,
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
         code=auth_code,
-        redirect_uri=redirect_uri
+        redirect_uri=REDIRECT_URI
     )
 
     event_data = {
         'team_id': response['team']['id'],
+        'user_id': response['authed_user']['id'],
+        'project_id': project,
         'team_name': response['team']['name'],
         'access_token': response['access_token'],
+        'token_type': response['token_type'],
+        'scope': response['scope'],
         'event': {
             'type': 'app_install'
         }
     }
     queue_event(event_data)
-    return redirect(f'{app_url}/oauth/?app={SLACK_WORKSPACE}')
+    return Response(status="200")
 
 @app.route("/events", methods=["POST"])
 def events():
@@ -77,7 +84,7 @@ def info():
     return {
         'name': 'slack',
         'version': APP_VERSION,
-        'installUrl': f'https://slack.com/oauth/v2/authorize?client_id={client_id}&scope=channels:manage,channels:join,channels:read,chat:write,chat:write.customize,reactions:read,reactions:write,users:read,channels:history&redirect_uri={redirect_uri}'
+        'installUrl': f'https://slack.com/oauth/v2/authorize?client_id={CLIENT_ID}&scope={SCOPE}&redirect_uri={REDIRECT_URI}'
     }
 
 def queue_event(event_data):

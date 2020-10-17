@@ -8,8 +8,10 @@ from src.services.slack_workspace_service import SlackWorkspaceService
 from src.services.discord_workspace_service import DiscordWorkspaceService
 from src.apps.const import SLACK_WORKSPACE, DISCORD_WORKSPACE
 
-workspace_services = {SLACK_WORKSPACE: SlackWorkspaceService(), DISCORD_WORKSPACE: DiscordWorkspaceService()}
+workspace_services = {SLACK_WORKSPACE: SlackWorkspaceService(
+), DISCORD_WORKSPACE: DiscordWorkspaceService()}
 entry = Entry(workspace_services)
+
 
 def resolve_event(event_data):
     """resolve and process event types - currently
@@ -20,6 +22,7 @@ def resolve_event(event_data):
         handle_message_event(event_data)
     if event_data["event"]["type"] == "app_install":
         handle_app_install(event_data)
+
 
 def handle_message_event(event_data):
     """process new message posted to slack channel"""
@@ -43,8 +46,8 @@ def handle_message_event(event_data):
     if workspace is None:
         return
     slack_workspace_service = workspace_services[SLACK_WORKSPACE]
-    user_display_name = slack_workspace_service.get_user_display_name(
-        event_data['event']['user'], workspace)
+    user_display_name = slack_workspace_service.get_username(
+        workspace.auth_token, event_data['event']['user'])
     asyncio.run(
         entry.process_message_posted_event(
             event_data['event']['text'],
@@ -52,12 +55,21 @@ def handle_message_event(event_data):
             user_display_name,
             SLACK_WORKSPACE))
 
+
 def handle_app_install(event_data):
     """process new app installation"""
+    slack_workspace_service = workspace_services[SLACK_WORKSPACE]
+    username = slack_workspace_service.get_username(
+        event_data['access_token'], event_data['user_id'])
+
     asyncio.run(
         entry.process_app_installed_event(
             SLACK_WORKSPACE,
             event_data['team_id'],
             event_data['team_name'],
-            event_data['access_token'])
-        )
+            event_data['project_id'],
+            event_data['access_token'],
+            token_type=event_data['token_type'],
+            scope=event_data['scope'],
+            username=username)
+    )

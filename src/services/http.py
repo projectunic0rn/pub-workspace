@@ -1,24 +1,44 @@
 """Module to make http requests to external services"""
 import requests
+from src.init_logger import InitLogger
 
 
 class HttpClient:
-    """Class that defines several http methods and
-       helper methods read and returned responses
+    """Defines standard http methods to make
+       network requests
     """
 
-    def __init__(self, headers):
-        self.headers = headers
+    def __init__(self):
+        self.logger = InitLogger.instance()
 
-    def get(self, endpoint):
+    def get(self, endpoint, headers=None):
         """http get method"""
-        response = requests.get(endpoint, headers=self.headers, verify=False)
-        response.raise_for_status()
-        return response.json()
+        response = requests.get(endpoint, headers=headers, verify=False)
+        try:
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as error:
+            self.logger.critical(error.response)
+            raise error
 
-    def update(self, endpoint, project):
-        """http update method"""
-        response = requests.put(endpoint, data=project,
-                                headers=self.headers, verify=False)
-        response.raise_for_status()
-        return response.json()
+    def put(self, endpoint, headers=None, data=None, body=None):
+        """http put method"""
+        response = requests.put(endpoint, data=data, json=body,
+                                headers=headers, verify=False)
+        try:
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as error:
+            self.logger.critical(error.response)
+            raise error
+
+    def post(self, endpoint, headers=None, data=None, body=None):
+        """http post method"""
+        response = requests.post(endpoint, data=data, json=body,
+                                 headers=headers, verify=False)
+        try:
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as error:
+            self.logger.critical(error.response)
+            raise error

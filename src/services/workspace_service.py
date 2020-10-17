@@ -19,3 +19,7 @@ class WorkspaceService(ABC):
     @abstractmethod
     def post_message(self, message, workspace_entity):
         """abstract method to create workspace channel"""
+
+    @abstractmethod
+    def get_username(self, auth_token, user_id=None):
+        """abstract method to create workspace channel"""

@@ -24,6 +24,7 @@ services:
       context: ../
       dockerfile: ci/discordworkspacebot.Dockerfile
     environment:
+      - DISCORD_REDIRECT_URI=http://localhost:8000/oauth/
       - APP_URL=https://projectunicorn.net
       - APP_ENV=development
       - WORKSPACES_CONNECTION_STRING=mysql+mysqldb://root:rootpass@db:3306/pub_workspaces?ssl=true

@@ -71,16 +71,15 @@ class SlackWorkspaceService(WorkspaceService):
         self.logger.info("posted slack message")
         return
 
-    def get_user_display_name(self, user_id, workspace_entity: WorkspaceEntity):
+    def get_username(self, auth_token, user_id=None):
         """Get display name of slack user"""
-        self.set_client_token(workspace_entity.auth_token)
+        self.set_client_token(auth_token)
         display_name = user_id
         try:
             user_info = self.client.users_info(user=user_id)
         except SlackApiError as error:
             # fallback on user_id as display name
-            self.logger.warning(f"slack {self.get_user_display_name.__name__} request failed for workspace {workspace_entity.id} and raised error: {error.response['error']}")
-            self.logger.warning("falling back to user_id as author")
+            self.logger.warning(f"slack {self.get_username.__name__} request failed, and raised error: {error.response['error']}. Falling back to user_id as author")
             return display_name
         else:
             return user_info['user']['profile']['display_name']
