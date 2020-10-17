@@ -7,12 +7,13 @@ from src.shared_core.entry import Entry
 from src.services.discord_workspace_service import DiscordWorkspaceService
 from src.services.slack_workspace_service import SlackWorkspaceService
 from src.init_logger import InitLogger
-from src.apps.const import APP_VERSION
+from src.apps.const import APP_VERSION, DISCORD_WORKSPACE, SLACK_WORKSPACE
 
-DISCORD_WORKSPACE = 'discord'
 logger = InitLogger.instance(DISCORD_WORKSPACE, os.environ["APP_ENV"])
-workspace_services = {'slack': SlackWorkspaceService(), 'discord': DiscordWorkspaceService()}
+workspace_services = {SLACK_WORKSPACE: SlackWorkspaceService(
+), DISCORD_WORKSPACE: DiscordWorkspaceService()}
 entry = Entry(workspace_services)
+
 
 class DiscordEventClient(discord.Client):
     """Class to handle events from discord"""
@@ -34,10 +35,6 @@ class DiscordEventClient(discord.Client):
             DISCORD_WORKSPACE)
         logger.info('Message from {0.author}: {0.content}'.format(message))
 
-    async def on_guild_join(self, guild):
-        """Override on_guild_join, indicates bot installed to new server"""
-        await entry.process_app_installed_event(DISCORD_WORKSPACE, guild.id, guild.name)
-        logger.info('Guild join {0.name}'.format(guild))
 
 client = DiscordEventClient()
 client.run(os.environ['DISCORD_BOT_TOKEN'])
