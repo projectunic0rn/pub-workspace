@@ -1,5 +1,5 @@
 """defines app version constant"""
-APP_VERSION = 'v0.0.25'
+APP_VERSION = 'v0.0.26'
 SLACK_WORKSPACE = 'slack'
 DISCORD_WORKSPACE = 'discord'
 DISCORD_API_ENDPOINT = 'https://discord.com/api/v6'
