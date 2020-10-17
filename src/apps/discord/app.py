@@ -40,8 +40,8 @@ def info():
 
 @app.route("/finish_auth", methods=["POST"])
 def post_install():
-    workspace_service = workspace_services[DISCORD_WORKSPACE]
     """finalize installation of discord app"""
+    workspace_service = workspace_services[DISCORD_WORKSPACE]
     auth_code = request.args['code']
     project_id = request.args['project']
     workspace_id = request.args['workspace']
