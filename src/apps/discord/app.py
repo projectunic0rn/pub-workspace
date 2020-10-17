@@ -17,7 +17,6 @@ redirect_uri = os.environ["DISCORD_REDIRECT_URI"]
 workspace_services = {SLACK_WORKSPACE: SlackWorkspaceService(
 ), DISCORD_WORKSPACE: DiscordWorkspaceService()}
 entry = Entry(workspace_services)
-entry = Entry(workspace_services)
 app = Flask(__name__)
 CORS(app)
 
