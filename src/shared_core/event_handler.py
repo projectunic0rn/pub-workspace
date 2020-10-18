@@ -1,6 +1,6 @@
 # pylint: disable=line-too-long
 """Handle events from all apps independent of app
-   workspace type e.g. slack, discord, etc
+   workspace type e.g. slack, discord, etc.
 """
 import os
 from sqlalchemy.orm import Session
@@ -70,13 +70,14 @@ class EventHandler:  # pylint: disable=too-few-public-methods
 
     def link_project(self, workspace_entity):
         """Associate workspace to project"""
+        print(workspace_entity)
         project = self.pub_service.get_project(workspace_entity.project_id)
         project['workspaceAppInstalled'] = True
+        project['workspaceId'] = workspace_entity.workspace_id
         project['workspaceMemberName'] = self.fetch_username(workspace_entity)
-        # project.workspace_recent_messages = workspace.recent_messages
-        # project.workspace_id = workspace_entity.workspace_id
-        # project.workspace_project_channel_id = workspace.project_channel_id
-        # project.workspace_project_channel_name = workspace.project_channel_name
+        project['workspaceProjectChannelId'] = self.fetch_project_channel_id(workspace_entity, project['communicationPlatformUrl'])
+        project['WorkspaceProjectChannelName'] = self.fetch_project_channel_name(workspace_entity)
+        project['CommunicationPlatformUrl'] = self.fetch_project_channel_messages(workspace_entity)
         self.pub_service.update_project(project)
 
     def fetch_username(self, workspace_entity):
@@ -87,3 +88,18 @@ class EventHandler:  # pylint: disable=too-few-public-methods
             return workspace_entity.username
         workspace_service = self.workspace_services[workspace_entity.workspace_type]
         return workspace_service.get_username(workspace_entity.auth_token)
+
+    def fetch_project_channel_id(self, workspace_entity, invite_url):
+        """Get the id of the primary project channel"""
+        workspace_service = self.workspace_services[workspace_entity.workspace_type]
+        return workspace_service.select_project_channel_id(workspace_entity, invite_url=invite_url)
+
+    def fetch_project_channel_name(self, workspace_entity):
+        """Get the id of the primary project channel"""
+        workspace_service = self.workspace_services[workspace_entity.workspace_type]
+        return workspace_service.select_project_channel_name()
+
+    def fetch_project_channel_messages(self, workspace_entity):
+        """Get the id of the primary project channel"""
+        workspace_service = self.workspace_services[workspace_entity.workspace_type]
+        return workspace_service.get_project_channel_id()

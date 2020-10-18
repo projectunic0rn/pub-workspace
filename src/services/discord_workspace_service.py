@@ -3,7 +3,7 @@
 # pylint: disable=too-many-instance-attributes
 """Module for making discord api calls"""
 import os
-from discord import Client, HTTPException
+from discord import Client, HTTPException, Guild
 from src.services.http import HttpClient
 from src.apps.const import DISCORD_API_ENDPOINT
 from src.services.workspace_service import WorkspaceService
@@ -34,7 +34,7 @@ class DiscordWorkspaceService(WorkspaceService):
             f'{self.api_endpoint}/users/@me', self.headers)
         return f'{user["username"]}#{user["discriminator"]}'
 
-    async def get_guild(self, workspace_id):
+    async def get_guild(self, workspace_id) -> Guild:
         """Get a discord server given server id"""
         guild = await self.client.fetch_guild(workspace_id)
         return guild
@@ -94,6 +94,29 @@ class DiscordWorkspaceService(WorkspaceService):
         await self.client.logout()
         self.logger.info("posted discord message")
         return
+
+    async def select_project_channel_id(self, workspace, **kwargs):
+        """Get project channel id using the channel
+           associated with the discord invite url.
+           invite api should always be valid.
+        """
+        invite_code = kwargs["invite_url"].rsplit("/", 1)[1]
+        invite = self.http_client.get(
+            f'{self.api_endpoint}/invites/{invite_code}', self.headers)
+        return invite["channel"]["id"]
+
+    def get_project_channel_name(self, workspace):
+        """Get project channel name using the channel
+           associated with the discord invite url.
+           invite api should always be valid.
+        """
+        raise NotImplementedError
+
+    def get_project_recent_message(self, channel_id, number_of_messages):
+        """Return number_of_messages from a channel
+           given the channel id
+        """
+        raise NotImplementedError
 
     def exchange_code(self, code):
         """Exchange code for access token"""

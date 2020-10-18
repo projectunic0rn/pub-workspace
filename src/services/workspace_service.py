@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from src.shared_core.data_objects.workspace_channel import WorkspaceChannel
 from src.persistence.workspace_entity import WorkspaceEntity
 
+
 class WorkspaceService(ABC):
     """Class that defines contract for workspace services.
        Each workspace will implement this class and
@@ -23,3 +24,19 @@ class WorkspaceService(ABC):
     @abstractmethod
     def get_username(self, auth_token, user_id=None):
         """abstract method to create workspace channel"""
+
+    @abstractmethod
+    def select_project_channel_id(self, workspace, **kwargs):
+        """Select a project channel id"""
+
+    @abstractmethod
+    def get_project_channel_name(self, workspace):
+        """Get project channel name given channel
+           id
+        """
+
+    @abstractmethod
+    def get_project_recent_message(self, channel_id, number_of_messages):
+        """Return number_of_messages from a channel
+           given the channel id
+        """

@@ -71,6 +71,25 @@ class SlackWorkspaceService(WorkspaceService):
         self.logger.info("posted slack message")
         return
 
+    def select_project_channel_id(self, workspace, **kwargs):
+        """Select a project channel id favoring
+           channel that has been most frequently
+           used in given time period.
+        """
+        raise NotImplementedError
+
+    def get_project_channel_name(self, workspace):
+        """Get project channel name given channel
+           id
+        """
+        raise NotImplementedError
+
+    def get_project_recent_message(self, channel_id, number_of_messages):
+        """Return number_of_messages from a channel
+           given the channel id
+        """
+        raise NotImplementedError
+
     def get_username(self, auth_token, user_id=None):
         """Get display name of slack user"""
         self.set_client_token(auth_token)
