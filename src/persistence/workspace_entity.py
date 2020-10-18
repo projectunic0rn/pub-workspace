@@ -21,7 +21,6 @@ class WorkspaceEntity(Base):
         auth_token: {self.auth_token}, \
         refresh_token: {self.refresh_token}, \
         token_type: {self.token_type}, \
-        token_expiration: {self.token_expiration}, \
         permissions: {self.permissions}, \
         token_expiration: {self.token_expiration}, \
         scope: {self.scope}, \
