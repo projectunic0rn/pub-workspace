@@ -96,10 +96,9 @@ class EventHandler:  # pylint: disable=too-few-public-methods
 
     def fetch_project_channel_name(self, workspace_entity):
         """Get the id of the primary project channel"""
-        workspace_service = self.workspace_services[workspace_entity.workspace_type]
-        return workspace_service.select_project_channel_name()
+        raise NotImplementedError
 
     def fetch_project_channel_messages(self, workspace_entity):
         """Get the id of the primary project channel"""
-        workspace_service = self.workspace_services[workspace_entity.workspace_type]
-        return workspace_service.get_project_channel_id()
+        raise NotImplementedError
+
