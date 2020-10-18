@@ -101,4 +101,3 @@ class EventHandler:  # pylint: disable=too-few-public-methods
     def fetch_project_channel_messages(self, workspace_entity):
         """Get the id of the primary project channel"""
         raise NotImplementedError
-
