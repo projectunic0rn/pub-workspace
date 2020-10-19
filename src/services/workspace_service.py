@@ -36,7 +36,7 @@ class WorkspaceService(ABC):
         """
 
     @abstractmethod
-    def get_project_recent_message(self, channel_id, number_of_messages):
+    def get_project_recent_messages(self, workspace):
         """Return number_of_messages from a channel
            given the channel id
         """
