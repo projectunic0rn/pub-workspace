@@ -17,7 +17,7 @@ class EventHandler:  # pylint: disable=too-few-public-methods
        for all workspace apps e.g. app install, message posted
     """
 
-    def __init__(self, workspace_services: WorkspaceService):
+    def __init__(self, workspace_services: [str, WorkspaceService]):
         self.workspace_services = workspace_services
         self.app_url = os.environ['APP_URL']
         self.pub_service = PubService()
@@ -76,8 +76,9 @@ class EventHandler:  # pylint: disable=too-few-public-methods
         project['workspaceId'] = workspace_entity.workspace_id
         project['workspaceMemberName'] = self.fetch_username(workspace_entity)
         project['workspaceProjectChannelId'] = self.fetch_project_channel_id(workspace_entity, project['communicationPlatformUrl'])
-        project['WorkspaceProjectChannelName'] = self.fetch_project_channel_name(workspace_entity)
-        project['CommunicationPlatformUrl'] = self.fetch_project_channel_messages(workspace_entity)
+        project['workspaceProjectChannelName'] = self.fetch_project_channel_name(workspace_entity)
+        project['workspaceRecentMessages'] = self.fetch_project_channel_messages(workspace_entity)
+        print(workspace_entity)
         self.pub_service.update_project(project)
 
     def fetch_username(self, workspace_entity):
@@ -96,8 +97,10 @@ class EventHandler:  # pylint: disable=too-few-public-methods
 
     def fetch_project_channel_name(self, workspace_entity):
         """Get the id of the primary project channel"""
-        raise NotImplementedError
+        workspace_service = self.workspace_services[workspace_entity.workspace_type]
+        return workspace_service.get_project_channel_name(workspace_entity)
 
     def fetch_project_channel_messages(self, workspace_entity):
         """Get the id of the primary project channel"""
-        raise NotImplementedError
+        workspace_service = self.workspace_services[workspace_entity.workspace_type]
+        return workspace_service.get_project_recent_messages(workspace_entity)

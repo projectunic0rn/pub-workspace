@@ -110,9 +110,27 @@ class DiscordWorkspaceService(WorkspaceService):
            associated with the discord invite url.
            invite api should always be valid.
         """
-        raise NotImplementedError
+        await self.client.login(os.environ['DISCORD_BOT_TOKEN'], bot=self.is_bot)
+        try:
+            guild = await self.get_guild(workspace.workspace_id)
+            channel = await guild.get_channel(workspace.channel_id)
+        except HTTPException as error:
+            self.logger.critical(
+                f"discord {self.get_project_channel_name.__name__} request failed for workspace {workspace.id} and raised error: {error.text} (code {error.code})")
+            raise error
+        except:
+            self.logger.critical(
+                f"unexpected discord failure {self.get_project_channel_name.__name__}")
+            self.logger.critical(f"inputs {workspace.id}")
+            raise
+        else:
+            channel_name = channel.name
 
-    def get_project_recent_message(self, channel_id, number_of_messages):
+        self.logger.info("get discord channel name")
+        await self.client.logout()
+        return channel_name
+
+    def get_project_recent_messages(self, workspace):
         """Return number_of_messages from a channel
            given the channel id
         """
