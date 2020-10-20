@@ -13,7 +13,7 @@ logger = InitLogger.instance(DISCORD_WORKSPACE, os.environ["APP_ENV"])
 workspace_services = {SLACK_WORKSPACE: SlackWorkspaceService(
 ), DISCORD_WORKSPACE: DiscordWorkspaceService()}
 entry = Entry(workspace_services)
-
+logger.warn(f'discord.py version: {discord.__version__}')
 
 class DiscordEventClient(discord.Client):
     """Class to handle events from discord"""
