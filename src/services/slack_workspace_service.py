@@ -78,13 +78,13 @@ class SlackWorkspaceService(WorkspaceService):
         """
         raise NotImplementedError
 
-    def get_project_channel_name(self, workspace):
+    async def get_project_channel_name(self, workspace):
         """Get project channel name given channel
            id
         """
         raise NotImplementedError
 
-    def get_project_recent_messages(self, workspace):
+    async def get_project_recent_messages(self, workspace):
         """Return number_of_messages from a channel
            given the channel id
         """

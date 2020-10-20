@@ -46,19 +46,15 @@ class DiscordWorkspaceService(WorkspaceService):
 
     async def create_channel(self, workspace_entity: WorkspaceEntity) -> WorkspaceChannel:
         """Create discord channel"""
+        channel_name = ""
+        channel_id = ""
         await self.client.login(os.environ['DISCORD_BOT_TOKEN'], bot=self.is_bot)
         try:
             guild = await self.get_guild(workspace_entity.workspace_id)
             channel = await guild.create_text_channel(workspace_entity.generated_channel_name)
         except HTTPException as error:
             self.logger.critical(
-                f"discord {self.create_channel.__name__} request failed for workspace {workspace_entity.id} and raised error: {error.text} (code {error.code})")
-            raise error
-        except:
-            self.logger.critical(
-                f"unexpected discord failure {self.create_channel.__name__}")
-            self.logger.critical(f"inputs {workspace_entity.id}")
-            raise
+                f"failed to create channel {self.create_channel.__name__} request failed for workspace {workspace_entity.id} and channel {workspace_entity.generated_channel_name}. Error details: {error.text} (code {error.code})")
         else:
             channel_id = channel.id
             channel_name = channel.name
@@ -95,7 +91,7 @@ class DiscordWorkspaceService(WorkspaceService):
         self.logger.info("posted discord message")
         return
 
-    async def select_project_channel_id(self, workspace, **kwargs):
+    def select_project_channel_id(self, workspace, **kwargs):
         """Get project channel id using the channel
            associated with the discord invite url.
            invite api should always be valid.
@@ -105,36 +101,40 @@ class DiscordWorkspaceService(WorkspaceService):
             f'{self.api_endpoint}/invites/{invite_code}', self.headers)
         return invite["channel"]["id"]
 
-    def get_project_channel_name(self, workspace):
+    async def get_project_channel_name(self, workspace: WorkspaceEntity):
         """Get project channel name using the channel
            associated with the discord invite url.
            invite api should always be valid.
         """
         await self.client.login(os.environ['DISCORD_BOT_TOKEN'], bot=self.is_bot)
+        channel_name = ""
         try:
-            guild = await self.get_guild(workspace.workspace_id)
-            channel = await guild.get_channel(workspace.channel_id)
+            channel = await self.get_channel(workspace.project_channel_id)
         except HTTPException as error:
             self.logger.critical(
                 f"discord {self.get_project_channel_name.__name__} request failed for workspace {workspace.id} and raised error: {error.text} (code {error.code})")
-            raise error
-        except:
-            self.logger.critical(
-                f"unexpected discord failure {self.get_project_channel_name.__name__}")
-            self.logger.critical(f"inputs {workspace.id}")
-            raise
         else:
             channel_name = channel.name
 
-        self.logger.info("get discord channel name")
         await self.client.logout()
         return channel_name
 
-    def get_project_recent_messages(self, workspace):
+    async def get_project_recent_messages(self, workspace):
         """Return number_of_messages from a channel
            given the channel id
         """
-        raise NotImplementedError
+        await self.client.login(os.environ['DISCORD_BOT_TOKEN'], bot=self.is_bot)
+        messages = []
+        try:
+            channel = await self.get_channel(workspace.project_channel_id)
+            async for message in channel.history(limit=5):
+                messages.append(message.content)
+        except HTTPException as error:
+            self.logger.critical(
+                f"discord {self.get_project_recent_messages.__name__} request failed for workspace {workspace.id} and raised error: {error.text} (code {error.code})")
+
+        await self.client.logout()
+        return messages
 
     def exchange_code(self, code):
         """Exchange code for access token"""

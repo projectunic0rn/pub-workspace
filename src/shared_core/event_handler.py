@@ -29,7 +29,7 @@ class EventHandler:  # pylint: disable=too-few-public-methods
         # Consider establishing session as part of events/requests received
         session = Session()
         await self.create_channel(workspace_entity)
-        self.link_project(workspace_entity)
+        await self.link_project(workspace_entity)
         session.add(workspace_entity)
         session.commit()
         session.close()
@@ -68,17 +68,18 @@ class EventHandler:  # pylint: disable=too-few-public-methods
         workspace_entity.generated_channel_name = channel.name
         await workspace_service.set_channel_topic(f'Channel for sending cross-platform messages across all workspaces for projects posted on {self.app_url}/projects.\n Use this channel to ask for help or find collaborators on a challenge you\'re facing.', workspace_entity)
 
-    def link_project(self, workspace_entity):
+    async def link_project(self, workspace_entity):
         """Associate workspace to project"""
-        print(workspace_entity)
         project = self.pub_service.get_project(workspace_entity.project_id)
         project['workspaceAppInstalled'] = True
         project['workspaceId'] = workspace_entity.workspace_id
         project['workspaceMemberName'] = self.fetch_username(workspace_entity)
-        project['workspaceProjectChannelId'] = self.fetch_project_channel_id(workspace_entity, project['communicationPlatformUrl'])
-        project['workspaceProjectChannelName'] = self.fetch_project_channel_name(workspace_entity)
-        project['workspaceRecentMessages'] = self.fetch_project_channel_messages(workspace_entity)
-        print(workspace_entity)
+        project['workspaceProjectChannelId'] = workspace_entity.project_channel_id = self.fetch_project_channel_id(
+            workspace_entity, project['communicationPlatformUrl'])
+        project['workspaceProjectChannelName'] = workspace_entity.project_channel_name = await self.fetch_project_channel_name(
+            workspace_entity)
+        project['workspaceRecentMessages'] = workspace_entity.project_channel_recent_messages = "\t".join(
+            await self.fetch_project_channel_messages(workspace_entity))
         self.pub_service.update_project(project)
 
     def fetch_username(self, workspace_entity):
@@ -95,12 +96,12 @@ class EventHandler:  # pylint: disable=too-few-public-methods
         workspace_service = self.workspace_services[workspace_entity.workspace_type]
         return workspace_service.select_project_channel_id(workspace_entity, invite_url=invite_url)
 
-    def fetch_project_channel_name(self, workspace_entity):
+    async def fetch_project_channel_name(self, workspace_entity):
         """Get the id of the primary project channel"""
         workspace_service = self.workspace_services[workspace_entity.workspace_type]
-        return workspace_service.get_project_channel_name(workspace_entity)
+        return await workspace_service.get_project_channel_name(workspace_entity)
 
-    def fetch_project_channel_messages(self, workspace_entity):
+    async def fetch_project_channel_messages(self, workspace_entity):
         """Get the id of the primary project channel"""
         workspace_service = self.workspace_services[workspace_entity.workspace_type]
-        return workspace_service.get_project_recent_messages(workspace_entity)
+        return await workspace_service.get_project_recent_messages(workspace_entity)
