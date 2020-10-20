@@ -16,7 +16,8 @@ class WorkspaceEntity(Base):
         generated_channel_id: {self.generated_channel_id}, \
         generated_channel_name: {self.generated_channel_name}, \
         project_id: {self.project_id}, \
-        primary_channel_id: {self.primary_channel_id}, \
+        project_channel_id: {self.project_channel_id}, \
+        project_channel_name: {self.project_channel_name}, \
         username: {self.username}, \
         auth_token: {self.auth_token}, \
         refresh_token: {self.refresh_token}, \
@@ -36,8 +37,9 @@ class WorkspaceEntity(Base):
     generated_channel_id = Column(String(255))
     generated_channel_name = Column(String(255))
     project_id = Column(String(255))
-    primary_channel_id = Column(String(255))
-    primary_channel_name = Column(String(255))
+    project_channel_id = Column(String(255))
+    project_channel_name = Column(String(255))
+    project_channel_recent_messages = Column(String(255))
     username = Column(String(255), default="")
     auth_token = Column(String(255), default="")
     refresh_token = Column(String(255), default="")
