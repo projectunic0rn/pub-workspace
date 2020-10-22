@@ -71,7 +71,7 @@ class SlackWorkspaceService(WorkspaceService):
         self.logger.info("posted slack message")
         return
 
-    def select_project_channel_id(self, workspace, **kwargs):
+    async def select_project_channel_id(self, workspace, **kwargs):
         """Select a project channel id favoring
            channel that has been most frequently
            used in given time period.

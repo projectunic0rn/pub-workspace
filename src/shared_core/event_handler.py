@@ -74,7 +74,7 @@ class EventHandler:  # pylint: disable=too-few-public-methods
         project['workspaceAppInstalled'] = True
         project['workspaceId'] = workspace_entity.workspace_id
         project['workspaceMemberName'] = self.fetch_username(workspace_entity)
-        project['workspaceProjectChannelId'] = workspace_entity.project_channel_id = self.fetch_project_channel_id(
+        project['workspaceProjectChannelId'] = workspace_entity.project_channel_id = await self.fetch_project_channel_id(
             workspace_entity, project['communicationPlatformUrl'])
         project['workspaceProjectChannelName'] = workspace_entity.project_channel_name = await self.fetch_project_channel_name(
             workspace_entity)
@@ -91,10 +91,10 @@ class EventHandler:  # pylint: disable=too-few-public-methods
         workspace_service = self.workspace_services[workspace_entity.workspace_type]
         return workspace_service.get_username(workspace_entity.auth_token)
 
-    def fetch_project_channel_id(self, workspace_entity, invite_url):
+    async def fetch_project_channel_id(self, workspace_entity, invite_url):
         """Get the id of the primary project channel"""
         workspace_service = self.workspace_services[workspace_entity.workspace_type]
-        return workspace_service.select_project_channel_id(workspace_entity, invite_url=invite_url)
+        return await workspace_service.select_project_channel_id(workspace_entity, invite_url=invite_url)
 
     async def fetch_project_channel_name(self, workspace_entity):
         """Get the id of the primary project channel"""
