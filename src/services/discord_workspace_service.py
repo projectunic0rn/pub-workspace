@@ -117,9 +117,9 @@ class DiscordWorkspaceService(WorkspaceService):
         return channel_id
 
     async def get_project_channel_name(self, workspace: WorkspaceEntity):
-        """Get project channel name given project_channel_idusing the channel
-           associated with the discord invite url.
-           invite api should always be valid.
+        """Get project channel name given project_channel_id
+           using the channel associated with the discord invite url.
+           invite should always be valid.
         """
         await self.client.login(os.environ['DISCORD_BOT_TOKEN'], bot=self.is_bot)
         channel_name = ""
