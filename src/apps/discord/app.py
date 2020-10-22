@@ -31,8 +31,11 @@ def info():
     return {
         'name': 'discord',
         'version': APP_VERSION,
-        # Permissions Manage channels, View channels, Send messages, Add reactions
-        'installUrl': f'https://discord.com/api/oauth2/authorize?client_id={CLIENT_ID}&permissions=3152&scope=bot%20identify&redirect_uri={REDIRECT_URI}&response_type=code',
+        # Permissions
+        # Manage channels, View channels,
+        # Send messages, Add reactions
+        # Read Message History
+        'installUrl': f'https://discord.com/api/oauth2/authorize?client_id={CLIENT_ID}&permissions=68688&scope=bot%20identify&redirect_uri={REDIRECT_URI}&response_type=code',
     }
 
 

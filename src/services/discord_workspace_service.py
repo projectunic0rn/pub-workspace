@@ -3,7 +3,8 @@
 # pylint: disable=too-many-instance-attributes
 """Module for making discord api calls"""
 import os
-from discord import Client, HTTPException, Guild
+from datetime import datetime, timedelta
+from discord import Client, HTTPException, Guild, abc, TextChannel
 from src.services.http import HttpClient
 from src.apps.const import DISCORD_API_ENDPOINT
 from src.services.workspace_service import WorkspaceService
@@ -91,18 +92,32 @@ class DiscordWorkspaceService(WorkspaceService):
         self.logger.info("posted discord message")
         return
 
-    def select_project_channel_id(self, workspace, **kwargs):
-        """Get project channel id using the channel
-           associated with the discord invite url.
-           invite api should always be valid.
+    async def select_project_channel_id(self, workspace: WorkspaceEntity, **kwargs):
+        """Default to getting project channel id associated
+           to the discord invite. If workspace id does match
+           invite guild id then we fetch guild channel and
+           select project channel id that belongs to workspace
         """
+        channel_id = ""
+
         invite_code = kwargs["invite_url"].rsplit("/", 1)[1]
         invite = self.http_client.get(
             f'{self.api_endpoint}/invites/{invite_code}', self.headers)
-        return invite["channel"]["id"]
+        channel_id = invite["channel"]["id"]
+
+        # discord invite associated to project may not
+        # belong to the server the app is installed on
+        if invite["guild"]["id"] != workspace.workspace_id:
+            await self.client.login(os.environ['DISCORD_BOT_TOKEN'], bot=self.is_bot)
+            guild = await self.get_guild(workspace.workspace_id)
+            channels = await guild.fetch_channels()
+            channel_id = await self.select_channel(channels, workspace)
+            await self.client.logout()
+
+        return channel_id
 
     async def get_project_channel_name(self, workspace: WorkspaceEntity):
-        """Get project channel name using the channel
+        """Get project channel name given project_channel_idusing the channel
            associated with the discord invite url.
            invite api should always be valid.
         """
@@ -111,6 +126,7 @@ class DiscordWorkspaceService(WorkspaceService):
         try:
             channel = await self.get_channel(workspace.project_channel_id)
         except HTTPException as error:
+            # project channel id may result in Missing Access (code 50001)
             self.logger.critical(
                 f"discord {self.get_project_channel_name.__name__} request failed for workspace {workspace.id} and raised error: {error.text} (code {error.code})")
         else:
@@ -173,3 +189,27 @@ class DiscordWorkspaceService(WorkspaceService):
         access_token = self.http_client.post(
             f'{self.api_endpoint}/oauth2/token', headers, data=data)
         return access_token
+
+    async def select_channel(self, channels: [abc.GuildChannel], workspace: WorkspaceEntity) -> str:
+        """select channel id with most message activity within
+           last 30 days"""
+        text_channels = []
+        max_messages = -1
+        max_messages_channel = ''
+        for channel in channels:
+            if isinstance(channel, TextChannel):
+                # skip generated channel from being selected
+                if channel.name == workspace.generated_channel_name:
+                    continue
+                text_channels.append(channel.id)
+
+        for channel_id in text_channels:
+            channel = await self.get_channel(channel_id)
+            one_month_ago = datetime.utcnow() - timedelta(days=30)
+            messages = await channel.history(limit=None, after=one_month_ago).flatten()
+            valid_message = [m for m in messages if not m.author.bot]
+            if len(valid_message) > max_messages:
+                max_messages = len(valid_message)
+                max_messages_channel = channel_id
+
+        return max_messages_channel
