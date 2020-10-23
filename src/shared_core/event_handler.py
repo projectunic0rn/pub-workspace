@@ -73,7 +73,7 @@ class EventHandler:  # pylint: disable=too-few-public-methods
         project = self.pub_service.get_project(workspace_entity.project_id)
         project['workspaceAppInstalled'] = True
         project['workspaceId'] = workspace_entity.workspace_id
-        project['workspaceMemberName'] = self.fetch_username(workspace_entity)
+        project['workspaceMemberName'] = workspace_entity.username = self.fetch_username(workspace_entity)
         project['workspaceProjectChannelId'] = workspace_entity.project_channel_id = await self.fetch_project_channel_id(
             workspace_entity, project['communicationPlatformUrl'])
         project['workspaceProjectChannelName'] = workspace_entity.project_channel_name = await self.fetch_project_channel_name(
