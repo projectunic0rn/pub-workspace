@@ -19,8 +19,8 @@ and rename the new file to `docker-compose.env` (removing .example). Then change
 # docker compose up
 $ docker-compose --file ci/docker-compose.yml up -d
 
-# on very first run, execute db schema.py to setup db
-$ docker exec -it pub-discord-workspace-bot python3 -m src.persistence.schema schema.py
+# run alembic migrations to setup db
+$ docker exec -it pub-discord-workspace-bot python3 -m alembic.config -c src/persistence/migrations/alembic.ini upgrade head
 
 # find install link, and install app to a test workspace
 $ open http://localhost:8002/info
@@ -32,7 +32,14 @@ $ docker-compose --file ci/docker-compose.yml build
 $ docker-compose --file ci/docker-compose.yml down
 ```
 
-You can use mysql cli or [mysql workbench](https://www.mysql.com/products/workbench/) to interface with docker instance of mysql.
+---
+**NOTES**
+
+- You can use mysql cli or [mysql workbench](https://www.mysql.com/products/workbench/) to interface with docker instance of mysql.
+- More info on managing db migrations found in [persistence readme](../../persistence)
+
+---
+
 
 ## Linting
 
