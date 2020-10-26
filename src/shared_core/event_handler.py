@@ -73,11 +73,14 @@ class EventHandler:  # pylint: disable=too-few-public-methods
         """Associate workspace to project"""
         project = self.pub_service.get_project(workspace_entity.project_id)
         patch_operations = []
-        patch_operations.append(patch_replace_op('/workspaceAppInstalled', True))
+        patch_operations.append(patch_replace_op(
+            '/workspaceAppInstalled', True))
         patch_operations.append(patch_replace_op(
             '/workspaceId', workspace_entity.workspace_id))
+
+        workspace_entity.username = self.fetch_username(workspace_entity)
         patch_operations.append(patch_replace_op(
-            '/workspaceMemberName', self.fetch_username(workspace_entity)))
+            '/workspaceMemberName', workspace_entity.username))
 
         workspace_entity.project_channel_id = await self.fetch_project_channel_id(
             workspace_entity, project['communicationPlatformUrl'])
