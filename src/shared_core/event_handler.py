@@ -10,6 +10,7 @@ from src.shared_core.data_objects.workspace_message import WorkspaceMessage
 from src.shared_core.message_to_markdown import MessageToMarkdown
 from src.services.pub_service import PubService
 from src.init_logger import InitLogger
+from src.utils.patch_ops import patch_replace_op
 
 
 class EventHandler:  # pylint: disable=too-few-public-methods
@@ -71,16 +72,28 @@ class EventHandler:  # pylint: disable=too-few-public-methods
     async def link_project(self, workspace_entity):
         """Associate workspace to project"""
         project = self.pub_service.get_project(workspace_entity.project_id)
-        project['workspaceAppInstalled'] = True
-        project['workspaceId'] = workspace_entity.workspace_id
-        project['workspaceMemberName'] = workspace_entity.username = self.fetch_username(workspace_entity)
-        project['workspaceProjectChannelId'] = workspace_entity.project_channel_id = await self.fetch_project_channel_id(
+        patch_operations = []
+        patch_operations.append(patch_replace_op('/workspaceAppInstalled', True))
+        patch_operations.append(patch_replace_op(
+            '/workspaceId', workspace_entity.workspace_id))
+        patch_operations.append(patch_replace_op(
+            '/workspaceMemberName', self.fetch_username(workspace_entity)))
+
+        workspace_entity.project_channel_id = await self.fetch_project_channel_id(
             workspace_entity, project['communicationPlatformUrl'])
-        project['workspaceProjectChannelName'] = workspace_entity.project_channel_name = await self.fetch_project_channel_name(
+        patch_operations.append(patch_replace_op(
+            '/workspaceProjectChannelId', workspace_entity.project_channel_id))
+
+        workspace_entity.project_channel_name = await self.fetch_project_channel_name(
             workspace_entity)
-        project['workspaceRecentMessages'] = workspace_entity.project_channel_recent_messages = "\t".join(
-            await self.fetch_project_channel_messages(workspace_entity))
-        self.pub_service.update_project(project)
+        patch_operations.append(patch_replace_op(
+            '/workspaceProjectChannelName', workspace_entity.project_channel_name))
+
+        workspace_entity.project_channel_recent_messages = "\t".join(await self.fetch_project_channel_messages(workspace_entity))
+        patch_operations.append(patch_replace_op(
+            '/workspaceRecentMessages', workspace_entity.project_channel_recent_messages))
+
+        self.pub_service.patch_project(project['id'], patch_operations)
 
     def fetch_username(self, workspace_entity):
         """Get the username if it isn't already present

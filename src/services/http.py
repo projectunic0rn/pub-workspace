@@ -23,8 +23,8 @@ class HttpClient:
 
     def put(self, endpoint, headers=None, data=None, body=None):
         """http put method"""
-        response = requests.put(endpoint, data=data, json=body,
-                                headers=headers)
+        response = requests.put(endpoint, data=data,
+                                json=body, headers=headers)
         try:
             response.raise_for_status()
             return response.json()
@@ -34,8 +34,19 @@ class HttpClient:
 
     def post(self, endpoint, headers=None, data=None, body=None):
         """http post method"""
-        response = requests.post(endpoint, data=data, json=body,
-                                 headers=headers)
+        response = requests.post(
+            endpoint, data=data, json=body, headers=headers)
+        try:
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as error:
+            self.logger.critical(error.response)
+            raise error
+
+    def patch(self, endpoint, headers=None, data=None, body=None):
+        """http patch method"""
+        response = requests.patch(
+            endpoint, data=data, json=body, headers=headers)
         try:
             response.raise_for_status()
             return response.json()

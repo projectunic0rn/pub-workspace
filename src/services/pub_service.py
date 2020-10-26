@@ -18,10 +18,18 @@ class PubService:
 
     def get_project(self, project_id):
         """method for fetching project"""
-        project = self.client.get(f'{self.pub_endpoint}/projects/{project_id}', self.headers)
+        project = self.client.get(
+            f'{self.pub_endpoint}/projects/{project_id}', self.headers)
         return project['data']
 
     def update_project(self, project):
         """method for updating project"""
-        project = self.client.put(f'{self.pub_endpoint}/projects', self.headers, body=project)
+        project = self.client.put(
+            f'{self.pub_endpoint}/projects', self.headers, body=project)
+        return project
+
+    def patch_project(self, project_id, patch_operations):
+        """method for patching project"""
+        project = self.client.patch(
+            f'{self.pub_endpoint}/projects/{project_id}', self.headers, body=patch_operations)
         return project
