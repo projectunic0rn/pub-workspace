@@ -3,6 +3,7 @@
 """Module for making slack api calls"""
 import string
 import random
+from datetime import datetime, timedelta
 from slack import WebClient
 from slack.errors import SlackApiError
 from src.services.workspace_service import WorkspaceService
@@ -76,19 +77,28 @@ class SlackWorkspaceService(WorkspaceService):
            channel that has been most frequently
            used in given time period.
         """
-        raise NotImplementedError
+        self.set_client_token(workspace.auth_token)
+        response = self.client.conversations_list()
+        channels = response.channels
+        project_channel_id = self.select_channel(channels)
+        return project_channel_id
 
     async def get_project_channel_name(self, workspace):
         """Get project channel name given channel
            id
         """
-        raise NotImplementedError
+        response = self.client.conversations_info(channel=workspace.project_channel_id)
+        raise response["channel"]['id']
 
     async def get_project_recent_messages(self, workspace):
         """Return number_of_messages from a channel
            given the channel id
         """
-        raise NotImplementedError
+        messages = []
+        response = self.client.conversations_history(channel=workspace.project_channel_id, limit=5)
+        for message in response["messages"]:
+            messages.append(message["text"])
+        return messages
 
     def get_username(self, auth_token, user_id=None):
         """Get display name of slack user"""
@@ -107,3 +117,21 @@ class SlackWorkspaceService(WorkspaceService):
     def substring_generator(size=3, chars=string.ascii_lowercase + string.digits):
         """Generate random sequence of chars/nums"""
         return ''.join(random.choice(chars) for _ in range(size))
+
+    async def select_channel(self, channels):
+        """Select project channel based on channel
+           with most recent messages
+        """
+        max_messages = -1
+        max_messages_channel = ''
+        one_month_ago = datetime.utcnow() - timedelta(days=30)
+        for channel in channels:
+            channel_id = channel["id"]
+            channel_history_latest = self.client.conversations_history(channel=channel_id)
+            channel_history_month = self.client.conversations_history(channel=channel_id, latest=one_month_ago)
+            messages_diff = len(channel_history_latest) - len(channel_history_month)
+            if messages_diff > max_messages:
+                max_messages = messages_diff
+                max_messages_channel = channel_id
+
+        return max_messages_channel
