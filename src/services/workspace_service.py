@@ -11,7 +11,7 @@ class WorkspaceService(ABC):
     """
     @abstractmethod
     def join_all_channels(self, workspace: WorkspaceEntity):
-        """abstract method to create workspace channel"""
+        """abstract method to join workspace channels"""
 
     @abstractmethod
     def create_channel(self, workspace_entity: WorkspaceEntity) -> WorkspaceChannel:
@@ -19,15 +19,15 @@ class WorkspaceService(ABC):
 
     @abstractmethod
     def set_channel_topic(self, channel_topic, workspace_entity):
-        """abstract method to create workspace channel"""
+        """abstract method to set workspace channel topic"""
 
     @abstractmethod
     def post_message(self, message, workspace_entity):
-        """abstract method to create workspace channel"""
+        """abstract method to post message to workspace channel"""
 
     @abstractmethod
     def get_username(self, auth_token, user_id=None):
-        """abstract method to create workspace channel"""
+        """abstract method to get username"""
 
     @abstractmethod
     def select_project_channel_id(self, workspace, **kwargs):
