@@ -29,6 +29,7 @@ class EventHandler:  # pylint: disable=too-few-public-methods
            workspace data"""
         # Consider establishing session as part of events/requests received
         session = Session()
+        await self.join_channels(workspace_entity)
         await self.create_channel(workspace_entity)
         await self.link_project(workspace_entity)
         session.add(workspace_entity)
@@ -54,6 +55,11 @@ class EventHandler:  # pylint: disable=too-few-public-methods
                 continue
             workspace_service = self.workspace_services[workspace.workspace_type]
             await workspace_service.post_message(message, workspace)
+
+    async def join_channels(self, workspace):
+        """Generate dev questions channel"""
+        workspace_service = self.workspace_services[workspace.workspace_type]
+        await workspace_service.join_all_channels(workspace)
 
     async def create_channel(self, workspace_entity):
         """Generate dev questions channel"""

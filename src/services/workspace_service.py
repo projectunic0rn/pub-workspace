@@ -10,6 +10,10 @@ class WorkspaceService(ABC):
        override its abstract methods
     """
     @abstractmethod
+    def join_all_channels(self, workspace: WorkspaceEntity):
+        """abstract method to create workspace channel"""
+
+    @abstractmethod
     def create_channel(self, workspace_entity: WorkspaceEntity) -> WorkspaceChannel:
         """abstract method to create workspace channel"""
 

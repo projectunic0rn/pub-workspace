@@ -28,6 +28,9 @@ class DiscordWorkspaceService(WorkspaceService):
         self.http_client = HttpClient()
         self.api_endpoint = DISCORD_API_ENDPOINT
 
+    async def join_all_channels(self, workspace):
+        pass
+
     def get_username(self, auth_token, user_id=None):
         """Get a discord server given server id"""
         self.headers['Authorization'] = f'Bearer {auth_token}'
