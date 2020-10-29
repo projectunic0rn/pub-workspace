@@ -58,10 +58,10 @@ class DiscordWorkspaceService(WorkspaceService):
             channels = await guild.fetch_channels()
             channel = None
             channel_exists = False
-            for channel in channels:
-                if channel.name == workspace_entity.generated_channel_name:
+            for chn in channels:
+                if chn.name == workspace_entity.generated_channel_name:
                     channel_exists = True
-                    channel = channel
+                    channel = chn
 
             if not channel_exists:
                 channel = await guild.create_text_channel(workspace_entity.generated_channel_name)
