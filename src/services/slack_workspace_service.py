@@ -60,8 +60,6 @@ class SlackWorkspaceService(WorkspaceService):
             channel_name = response['channel']['name']
 
         self.logger.info("created slack channel")
-        self.logger.warning(f"create_channel channel_id {channel_id}")
-        self.logger.warning(f"create_channel channel_name {channel_name}")
         return WorkspaceChannel(channel_id, channel_name)
 
     async def set_channel_topic(self, channel_topic, workspace_entity: WorkspaceEntity):
@@ -189,12 +187,27 @@ class SlackWorkspaceService(WorkspaceService):
                     channel=channel_id)
                 channel_history_month = self.client.conversations_history(
                     channel=channel_id, latest=one_month_ago.timestamp())
+
+                latest_messages_count = self.valid_messages_count(
+                    channel_history_latest['messages'])
+                month_messages_count = self.valid_messages_count(
+                    channel_history_month['messages'])
             except SlackApiError as error:
                 self.logger.warning(
                     f"slack {self.select_channel.__name__} request failed and raised error: {error.response['error']}")
-            messages_diff = len(channel_history_latest['messages']) - \
-                len(channel_history_month['messages'])
+            messages_diff = latest_messages_count - month_messages_count
+            self.logger.warning(f"messages_diff {messages_diff}, {channel['name']}")
             if messages_diff > max_messages:
                 max_messages = messages_diff
                 max_messages_channel = channel_id
         return max_messages_channel
+
+    def valid_messages_count(self, messages):
+        """Count only user messages"""
+        messages_count = 0
+        for m in messages:
+            if 'subtype' in m:
+                continue
+            messages_count += 1
+
+        return messages_count
