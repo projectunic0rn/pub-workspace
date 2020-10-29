@@ -20,8 +20,6 @@ def resolve_event(event_data):
     # handle message type event
     if event_data["event"]["type"] == "message":
         handle_message_event(event_data)
-    if event_data["event"]["type"] == "app_install":
-        handle_app_install(event_data)
 
 
 def handle_message_event(event_data):
@@ -54,22 +52,3 @@ def handle_message_event(event_data):
             event_data['event']['channel'],
             user_display_name,
             SLACK_WORKSPACE))
-
-
-def handle_app_install(event_data):
-    """process new app installation"""
-    slack_workspace_service = workspace_services[SLACK_WORKSPACE]
-    username = slack_workspace_service.get_username(
-        event_data['access_token'], event_data['user_id'])
-
-    asyncio.run(
-        entry.process_app_installed_event(
-            SLACK_WORKSPACE,
-            event_data['team_id'],
-            event_data['team_name'],
-            event_data['project_id'],
-            event_data['access_token'],
-            token_type=event_data['token_type'],
-            scope=event_data['scope'],
-            username=username)
-    )

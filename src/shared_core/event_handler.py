@@ -61,12 +61,12 @@ class EventHandler:  # pylint: disable=too-few-public-methods
         workspace_service = self.workspace_services[workspace.workspace_type]
         await workspace_service.join_all_channels(workspace)
 
-    async def create_channel(self, workspace_entity):
+    async def create_channel(self, workspace_entity: WorkspaceEntity):
         """Generate dev questions channel"""
         workspace_service = self.workspace_services[workspace_entity.workspace_type]
         workspace_entity.generated_channel_name = 'dev-questions'
         try:
-            channel = await workspace_service.create_channel(workspace_entity)
+            channel = await workspace_service.create_channel_if_not_exists(workspace_entity)
         except:
             self.logger.critical(
                 f'failed to create {workspace_entity.generated_channel_name} channel')

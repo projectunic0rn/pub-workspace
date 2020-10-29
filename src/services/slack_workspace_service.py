@@ -33,7 +33,7 @@ class SlackWorkspaceService(WorkspaceService):
                 f"slack {self.join_all_channels.__name__} request failed for workspace {workspace.id} and raised error: {error.response['error']}")
         return
 
-    async def create_channel(self, workspace_entity: WorkspaceEntity) -> WorkspaceChannel:
+    async def create_channel_if_not_exists(self, workspace_entity: WorkspaceEntity) -> WorkspaceChannel:
         """Create a channel on the slack workspace"""
         self.set_client_token(workspace_entity.auth_token)
         channel_id = ''
@@ -44,7 +44,7 @@ class SlackWorkspaceService(WorkspaceService):
         except SlackApiError as error:
             if error.response['error'] == "name_taken":
                 self.logger.warning(
-                    f"slack {self.create_channel.__name__} request failed and raised error: {error.response['error']}")
+                    f"slack {self.create_channel_if_not_exists.__name__} request failed and raised error: {error.response['error']}")
                 self.logger.warning("attempting to fetch channel")
                 channels = self.fetch_all_channels()
                 for channel in channels:
@@ -54,7 +54,7 @@ class SlackWorkspaceService(WorkspaceService):
                         channel_name = channel['name']
             else:
                 self.logger.critical(
-                    f"slack {self.create_channel.__name__} request failed for workspace {workspace_entity.id} and raised error: {error.response['error']}")
+                    f"slack {self.create_channel_if_not_exists.__name__} request failed for workspace {workspace_entity.id} and raised error: {error.response['error']}")
         else:
             channel_id = response['channel']['id']
             channel_name = response['channel']['name']
@@ -188,26 +188,25 @@ class SlackWorkspaceService(WorkspaceService):
                 channel_history_month = self.client.conversations_history(
                     channel=channel_id, latest=one_month_ago.timestamp())
 
-                latest_messages_count = self.valid_messages_count(
+                latest_messages_count = valid_messages_count(
                     channel_history_latest['messages'])
-                month_messages_count = self.valid_messages_count(
+                month_messages_count = valid_messages_count(
                     channel_history_month['messages'])
             except SlackApiError as error:
                 self.logger.warning(
                     f"slack {self.select_channel.__name__} request failed and raised error: {error.response['error']}")
             messages_diff = latest_messages_count - month_messages_count
-            self.logger.warning(f"messages_diff {messages_diff}, {channel['name']}")
             if messages_diff > max_messages:
                 max_messages = messages_diff
                 max_messages_channel = channel_id
         return max_messages_channel
 
-    def valid_messages_count(self, messages):
-        """Count only user messages"""
-        messages_count = 0
-        for m in messages:
-            if 'subtype' in m:
-                continue
-            messages_count += 1
 
-        return messages_count
+def valid_messages_count(messages):
+    """Count only user messages"""
+    messages_count = 0
+    for message in messages:
+        if 'subtype' in message:
+            continue
+        messages_count += 1
+    return messages_count

@@ -1,5 +1,6 @@
 # pylint: disable=line-too-long
 """Entry point for flask app."""
+import asyncio
 import os
 import time
 import json
@@ -7,9 +8,17 @@ import slack
 from azure.servicebus import ServiceBusClient, Message
 from flask_cors import CORS
 from flask import request, Flask, abort, Response
-from src.apps.const import APP_VERSION, SLACK_WORKSPACE
+from src.shared_core.entry import Entry
+from src.apps.const import APP_VERSION, SLACK_WORKSPACE, DISCORD_WORKSPACE
+from src.services.slack_workspace_service import SlackWorkspaceService
+from src.services.discord_workspace_service import DiscordWorkspaceService
 from src.apps.slack.request_validator import RequestValidator
 from src.init_logger import InitLogger
+
+
+workspace_services = {SLACK_WORKSPACE: SlackWorkspaceService(
+), DISCORD_WORKSPACE: DiscordWorkspaceService()}
+entry = Entry(workspace_services)
 
 connstr = os.environ['SERVICE_BUS_CONN_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
@@ -54,11 +63,24 @@ def post_install():
         'access_token': response['access_token'],
         'token_type': response['token_type'],
         'scope': response['scope'],
-        'event': {
-            'type': 'app_install'
-        }
     }
-    queue_event(event_data)
+
+    slack_workspace_service = workspace_services[SLACK_WORKSPACE]
+    username = slack_workspace_service.get_username(
+        event_data['access_token'], event_data['user_id'])
+
+    asyncio.run(
+        entry.process_app_installed_event(
+            SLACK_WORKSPACE,
+            event_data['team_id'],
+            event_data['team_name'],
+            event_data['project_id'],
+            event_data['access_token'],
+            token_type=event_data['token_type'],
+            scope=event_data['scope'],
+            username=username)
+    )
+
     return Response(status="200")
 
 @app.route("/events", methods=["POST"])
