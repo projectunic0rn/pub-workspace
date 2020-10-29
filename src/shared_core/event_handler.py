@@ -39,7 +39,7 @@ class EventHandler:  # pylint: disable=too-few-public-methods
 
     async def on_message_posted(self, workspace_message: WorkspaceMessage, session: Session):
         """Manage message posts, transform message, query all workspaces,
-           distribute messages to dev-questions channel for each unique 
+           distribute messages to dev-questions channel for each unique
            workspace"""
         # Move message_to_markdown logic when we start sending
         # messages to other channels
