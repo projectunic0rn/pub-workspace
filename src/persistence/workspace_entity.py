@@ -8,6 +8,12 @@ from src.persistence.db_config import Base
 class WorkspaceEntity(Base):
     """Class defines objects which maps to workspaces table"""
 
+    def __eq__(self, other):
+        return self.workspace_id == other.workspace_id
+
+    def __hash__(self):
+        return hash(self.workspace_id)
+
     def __repr__(self):
         return f'WorkspaceEntity(id: {self.id}, \
         workspace_type: {self.workspace_type}, \
