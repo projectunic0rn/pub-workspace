@@ -196,12 +196,11 @@ class SlackWorkspaceService(WorkspaceService):
                 self.logger.warning(
                     f"slack {self.select_channel.__name__} request failed and raised error: {error.response['error']}")
             messages_diff = latest_messages_count - month_messages_count
-            self.logger.warning(
-                f"messages_diff {messages_diff}, {channel['name']}")
             if messages_diff > max_messages:
                 max_messages = messages_diff
                 max_messages_channel = channel_id
         return max_messages_channel
+
 
 def valid_messages_count(messages):
     """Count only user messages"""

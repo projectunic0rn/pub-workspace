@@ -49,6 +49,9 @@ services:
       - FLASK_ENV=development
       - SERVICE_BUS_QUEUE_NAME=slack-workspace-app-dev
       - SLACK_CLIENT_ID=592647108848.1155053165619
+      - WORKSPACES_CONNECTION_STRING=mysql+mysqldb://root:rootpass@db:3306/pub_workspaces?ssl=true
+      - DISCORD_REDIRECT_URI=http://localhost:8000/oauth/
+      - PUB_API_ENDPOINT=https://host.docker.internal:5001/api
   slackbot:
     container_name: pub-slack-workspace-bot
     env_file: docker-compose.env
