@@ -33,7 +33,7 @@ class SlackWorkspaceService(WorkspaceService):
                 f"slack {self.join_all_channels.__name__} request failed for workspace {workspace.id} and raised error: {error.response['error']}")
         return
 
-    async def create_channel(self, workspace_entity: WorkspaceEntity) -> WorkspaceChannel:
+    async def create_channel_if_not_exists(self, workspace_entity: WorkspaceEntity) -> WorkspaceChannel:
         """Create a channel on the slack workspace"""
         self.set_client_token(workspace_entity.auth_token)
         channel_id = ''
@@ -44,7 +44,7 @@ class SlackWorkspaceService(WorkspaceService):
         except SlackApiError as error:
             if error.response['error'] == "name_taken":
                 self.logger.warning(
-                    f"slack {self.create_channel.__name__} request failed and raised error: {error.response['error']}")
+                    f"slack {self.create_channel_if_not_exists.__name__} request failed and raised error: {error.response['error']}")
                 self.logger.warning("attempting to fetch channel")
                 channels = self.fetch_all_channels()
                 for channel in channels:
@@ -54,7 +54,7 @@ class SlackWorkspaceService(WorkspaceService):
                         channel_name = channel['name']
             else:
                 self.logger.critical(
-                    f"slack {self.create_channel.__name__} request failed for workspace {workspace_entity.id} and raised error: {error.response['error']}")
+                    f"slack {self.create_channel_if_not_exists.__name__} request failed for workspace {workspace_entity.id} and raised error: {error.response['error']}")
         else:
             channel_id = response['channel']['id']
             channel_name = response['channel']['name']

@@ -48,17 +48,26 @@ class DiscordWorkspaceService(WorkspaceService):
         channel = await self.client.fetch_channel(channel_id)
         return channel
 
-    async def create_channel(self, workspace_entity: WorkspaceEntity) -> WorkspaceChannel:
+    async def create_channel_if_not_exists(self, workspace_entity: WorkspaceEntity) -> WorkspaceChannel:
         """Create discord channel"""
         channel_name = ""
         channel_id = ""
         await self.client.login(os.environ['DISCORD_BOT_TOKEN'], bot=self.is_bot)
         try:
             guild = await self.get_guild(workspace_entity.workspace_id)
-            channel = await guild.create_text_channel(workspace_entity.generated_channel_name)
+            channels = await guild.fetch_channels()
+            channel = None
+            channel_exists = False
+            for channel in channels:
+                if channel.name == workspace_entity.generated_channel_name:
+                    channel_exists = True
+                    channel = channel
+
+            if not channel_exists:
+                channel = await guild.create_text_channel(workspace_entity.generated_channel_name)
         except HTTPException as error:
             self.logger.critical(
-                f"failed to create channel {self.create_channel.__name__} request failed for workspace {workspace_entity.id} and channel {workspace_entity.generated_channel_name}. Error details: {error.text} (code {error.code})")
+                f"failed to create channel {self.create_channel_if_not_exists.__name__} request failed for workspace {workspace_entity.id} and channel {workspace_entity.generated_channel_name}. Error details: {error.text} (code {error.code})")
         else:
             channel_id = channel.id
             channel_name = channel.name

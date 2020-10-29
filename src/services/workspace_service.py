@@ -14,7 +14,7 @@ class WorkspaceService(ABC):
         """abstract method to join workspace channels"""
 
     @abstractmethod
-    def create_channel(self, workspace_entity: WorkspaceEntity) -> WorkspaceChannel:
+    def create_channel_if_not_exists(self, workspace_entity: WorkspaceEntity) -> WorkspaceChannel:
         """abstract method to create workspace channel"""
 
     @abstractmethod
