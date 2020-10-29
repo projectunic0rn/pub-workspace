@@ -115,16 +115,25 @@ class DiscordWorkspaceService(WorkspaceService):
         invite_code = kwargs["invite_url"].rsplit("/", 1)[1]
         invite = self.http_client.get(
             f'{self.api_endpoint}/invites/{invite_code}', self.headers)
-        channel_id = invite["channel"]["id"]
-
-        # discord invite associated to project may not
-        # belong to the server the app is installed on
-        if invite["guild"]["id"] != workspace.workspace_id:
+        # invite could be invalid
+        if invite['code'] == 10006:
             await self.client.login(os.environ['DISCORD_BOT_TOKEN'], bot=self.is_bot)
             guild = await self.get_guild(workspace.workspace_id)
             channels = await guild.fetch_channels()
             channel_id = await self.select_channel(channels, workspace)
             await self.client.logout()
+        else:
+            channel_id = invite["channel"]["id"]
+
+            # discord invite associated to project may not
+            # belong to the server the app is installed on
+            # so select a channel which exists on server
+            if invite["guild"]["id"] != workspace.workspace_id:
+                await self.client.login(os.environ['DISCORD_BOT_TOKEN'], bot=self.is_bot)
+                guild = await self.get_guild(workspace.workspace_id)
+                channels = await guild.fetch_channels()
+                channel_id = await self.select_channel(channels, workspace)
+                await self.client.logout()
 
         return channel_id
 
@@ -156,6 +165,8 @@ class DiscordWorkspaceService(WorkspaceService):
         try:
             channel = await self.get_channel(workspace.project_channel_id)
             async for message in channel.history(limit=5):
+                if message.author.bot:
+                    continue
                 messages.append(message.content)
         except HTTPException as error:
             self.logger.critical(

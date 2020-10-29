@@ -15,7 +15,6 @@ class HttpClient:
         """http get method"""
         response = requests.get(endpoint, headers=headers)
         try:
-            response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError as error:
             self.logger.critical(error.response)
