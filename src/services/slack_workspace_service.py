@@ -128,7 +128,7 @@ class SlackWorkspaceService(WorkspaceService):
             self.logger.warning(
                 f"slack {self.get_project_recent_messages.__name__} request failed for workspace {workspace.id} and raised error: {error.response['error']}")
         for message in response['messages']:
-            self.logger.warning(f"get_project_recent_messages message {message}")
+            self.logger.critical(f"get_project_recent_messages message {message}")
             if 'subtype' in message:
                 continue
             messages.append(message['text'])
