@@ -25,9 +25,15 @@ def resolve_event(event_data):
 def handle_message_event(event_data):
     """process new message posted to slack channel"""
     try:
-        # ignore event if posted by bot or subtype is present
+        # ignore event if posted by bot
         if event_data["event"]["bot_id"]:
             return
+    except KeyError:
+        # fall through
+        pass
+
+    try:
+        # skip message event if subtype is present
         if event_data["event"]["subtype"]:
             return
     except KeyError:
