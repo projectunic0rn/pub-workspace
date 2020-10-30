@@ -7,12 +7,10 @@ from src.shared_core.entry import Entry
 from src.services.slack_workspace_service import SlackWorkspaceService
 from src.services.discord_workspace_service import DiscordWorkspaceService
 from src.apps.const import SLACK_WORKSPACE, DISCORD_WORKSPACE
-from src.init_logger import InitLogger
 
 workspace_services = {SLACK_WORKSPACE: SlackWorkspaceService(
 ), DISCORD_WORKSPACE: DiscordWorkspaceService()}
 entry = Entry(workspace_services)
-logger = InitLogger.instance()
 
 def resolve_event(event_data):
     """resolve and process event types - currently
@@ -25,7 +23,6 @@ def resolve_event(event_data):
 
 def handle_message_event(event_data):
     """process new message posted to slack channel"""
-    logger.critical(f"event_data['event'] {event_data['event']}")
     try:
         # ignore event if posted by bot
         if event_data["event"]["bot_id"]:
