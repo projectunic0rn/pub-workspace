@@ -59,7 +59,7 @@ def post_install():
     asyncio.run(entry.process_app_installed_event(
         DISCORD_WORKSPACE,
         workspace_id,
-        "",
+        "no value",
         project_id,
         access_token,
         refresh_token,

@@ -21,6 +21,7 @@ class EventHandler:  # pylint: disable=too-few-public-methods
     def __init__(self, workspace_services: [str, WorkspaceService]):
         self.workspace_services = workspace_services
         self.app_url = os.environ['APP_URL']
+        self.env_label = f'-{os.environ["APP_ENV"]}' if os.environ['APP_ENV'] != 'production' else ''
         self.pub_service = PubService()
         self.logger = InitLogger.instance()
 
@@ -29,7 +30,8 @@ class EventHandler:  # pylint: disable=too-few-public-methods
            workspace data"""
         # Consider establishing session as part of events/requests received
         session = Session()
-        await self.create_channel(workspace_entity)
+        await self.join_channels(workspace_entity)
+        await self.create_dev_questions_channel(workspace_entity)
         await self.link_project(workspace_entity)
         session.add(workspace_entity)
         session.commit()
@@ -37,7 +39,8 @@ class EventHandler:  # pylint: disable=too-few-public-methods
 
     async def on_message_posted(self, workspace_message: WorkspaceMessage, session: Session):
         """Manage message posts, transform message, query all workspaces,
-           distribute messages to all workspaces."""
+           distribute messages to dev-questions channel for each unique
+           workspace"""
         # Move message_to_markdown logic when we start sending
         # messages to other channels
         self.logger.debug(f"in {self.on_message_posted.__name__}")
@@ -49,18 +52,25 @@ class EventHandler:  # pylint: disable=too-few-public-methods
         workspace_channel_id = workspace_message.channel_id
         workspaces = session.query(WorkspaceEntity).all()
         string_workspace_channel_id = str(workspace_channel_id)
-        for workspace in workspaces:
+        # filter out unique workspaces
+        unique_workspaces = set(workspaces)
+        for workspace in unique_workspaces:
             if workspace.generated_channel_id == string_workspace_channel_id:
                 continue
             workspace_service = self.workspace_services[workspace.workspace_type]
             await workspace_service.post_message(message, workspace)
 
-    async def create_channel(self, workspace_entity):
+    async def join_channels(self, workspace):
+        """Generate dev questions channel"""
+        workspace_service = self.workspace_services[workspace.workspace_type]
+        await workspace_service.join_all_channels(workspace)
+
+    async def create_dev_questions_channel(self, workspace_entity: WorkspaceEntity):
         """Generate dev questions channel"""
         workspace_service = self.workspace_services[workspace_entity.workspace_type]
-        workspace_entity.generated_channel_name = 'dev-questions'
+        workspace_entity.generated_channel_name = f'dev-questions{self.env_label}'
         try:
-            channel = await workspace_service.create_channel(workspace_entity)
+            channel = await workspace_service.create_channel_if_not_exists(workspace_entity)
         except:
             self.logger.critical(
                 f'failed to create {workspace_entity.generated_channel_name} channel')

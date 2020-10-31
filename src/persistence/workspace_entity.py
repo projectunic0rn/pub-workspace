@@ -1,12 +1,18 @@
 # pylint: disable=too-few-public-methods
 """Module defines objects which maps to workspaces table"""
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Text
 from src.persistence.db_config import Base
 
 
 class WorkspaceEntity(Base):
     """Class defines objects which maps to workspaces table"""
+
+    def __eq__(self, other):
+        return self.workspace_id == other.workspace_id
+
+    def __hash__(self):
+        return hash(self.workspace_id)
 
     def __repr__(self):
         return f'WorkspaceEntity(id: {self.id}, \
@@ -36,17 +42,17 @@ class WorkspaceEntity(Base):
     workspace_id = Column(String(255))
     generated_channel_id = Column(String(255))
     generated_channel_name = Column(String(255))
-    project_id = Column(String(255))
+    project_id = Column(String(255), unique=True)
     project_channel_id = Column(String(255))
     project_channel_name = Column(String(255))
-    project_channel_recent_messages = Column(String(255))
+    project_channel_recent_messages = Column(Text())
     username = Column(String(255), default="")
     auth_token = Column(String(255), default="")
     refresh_token = Column(String(255), default="")
     token_type = Column(String(255), default="")
     token_expiration = Column(DateTime())
     permissions = Column(String(255), default="")
-    scope = Column(String(255), default="")
+    scope = Column(Text())
     created_on = Column(DateTime(), default=datetime.utcnow())
     updated_on = Column(DateTime(), default=datetime.utcnow(),
                         onupdate=datetime.utcnow())

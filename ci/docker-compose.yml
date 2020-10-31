@@ -44,13 +44,30 @@ services:
       dockerfile: ci/slackworkspace.Dockerfile
     environment:
       - SLACK_REDIRECT_URI=http://localhost:8000/oauth/
-      - PUB_API_ENDPOINT=https://host.docker.internal:5001/api
-      - WORKSPACES_CONNECTION_STRING=mysql+mysqldb://root:rootpass@db:3306/pub_workspaces?ssl=true
       - APP_URL=https://projectunicorn.net
       - APP_ENV=development
       - FLASK_ENV=development
-      - SERVICE_BUS_QUEUE_NAME=slack-workspace-app-test
+      - SERVICE_BUS_QUEUE_NAME=slack-workspace-app-dev
       - SLACK_CLIENT_ID=592647108848.1155053165619
+      - WORKSPACES_CONNECTION_STRING=mysql+mysqldb://root:rootpass@db:3306/pub_workspaces?ssl=true
+      - DISCORD_REDIRECT_URI=http://localhost:8000/oauth/
+      - PUB_API_ENDPOINT=https://host.docker.internal:5001/api
+  slackbot:
+    container_name: pub-slack-workspace-bot
+    env_file: docker-compose.env
+    restart: 'no'
+    build:
+      context: ../
+      dockerfile: ci/slackworkspacebot.Dockerfile
+    environment:
+      - DISCORD_REDIRECT_URI=http://localhost:8000/oauth/
+      - APP_URL=https://projectunicorn.net
+      - APP_ENV=development
+      - WORKSPACES_CONNECTION_STRING=mysql+mysqldb://root:rootpass@db:3306/pub_workspaces?ssl=true
+      - PUB_API_ENDPOINT=https://host.docker.internal:5001/api
+      - SERVICE_BUS_QUEUE_NAME=slack-workspace-app-dev
+    depends_on:
+      - db
   db:
     image: mysql:5.7.16
     container_name: pub-mysql

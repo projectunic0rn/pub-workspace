@@ -22,7 +22,9 @@ $ docker-compose --file ci/docker-compose.yml up -d
 # run alembic migrations to setup db
 $ docker exec -it pub-discord-workspace-bot python3 -m alembic.config -c src/persistence/migrations/alembic.ini upgrade head
 
-# find install link, and install app to a test workspace
+# view app install link via flask app ui
+# app should be installed through a project page via pub ui https://github.com/projectunic0rn/pub
+# installing the app directly is untested and may cause errors
 $ open http://localhost:8002/info
 
 # rebuild images on changes

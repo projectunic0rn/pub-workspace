@@ -28,6 +28,9 @@ class DiscordWorkspaceService(WorkspaceService):
         self.http_client = HttpClient()
         self.api_endpoint = DISCORD_API_ENDPOINT
 
+    async def join_all_channels(self, workspace):
+        pass
+
     def get_username(self, auth_token, user_id=None):
         """Get a discord server given server id"""
         self.headers['Authorization'] = f'Bearer {auth_token}'
@@ -45,17 +48,26 @@ class DiscordWorkspaceService(WorkspaceService):
         channel = await self.client.fetch_channel(channel_id)
         return channel
 
-    async def create_channel(self, workspace_entity: WorkspaceEntity) -> WorkspaceChannel:
+    async def create_channel_if_not_exists(self, workspace_entity: WorkspaceEntity) -> WorkspaceChannel:
         """Create discord channel"""
         channel_name = ""
         channel_id = ""
         await self.client.login(os.environ['DISCORD_BOT_TOKEN'], bot=self.is_bot)
         try:
             guild = await self.get_guild(workspace_entity.workspace_id)
-            channel = await guild.create_text_channel(workspace_entity.generated_channel_name)
+            channels = await guild.fetch_channels()
+            channel = None
+            channel_exists = False
+            for chn in channels:
+                if chn.name == workspace_entity.generated_channel_name:
+                    channel_exists = True
+                    channel = chn
+
+            if not channel_exists:
+                channel = await guild.create_text_channel(workspace_entity.generated_channel_name)
         except HTTPException as error:
             self.logger.critical(
-                f"failed to create channel {self.create_channel.__name__} request failed for workspace {workspace_entity.id} and channel {workspace_entity.generated_channel_name}. Error details: {error.text} (code {error.code})")
+                f"failed to create channel {self.create_channel_if_not_exists.__name__} request failed for workspace {workspace_entity.id} and channel {workspace_entity.generated_channel_name}. Error details: {error.text} (code {error.code})")
         else:
             channel_id = channel.id
             channel_name = channel.name
@@ -103,16 +115,25 @@ class DiscordWorkspaceService(WorkspaceService):
         invite_code = kwargs["invite_url"].rsplit("/", 1)[1]
         invite = self.http_client.get(
             f'{self.api_endpoint}/invites/{invite_code}', self.headers)
-        channel_id = invite["channel"]["id"]
-
-        # discord invite associated to project may not
-        # belong to the server the app is installed on
-        if invite["guild"]["id"] != workspace.workspace_id:
+        # invite could be invalid
+        if invite['code'] == 10006:
             await self.client.login(os.environ['DISCORD_BOT_TOKEN'], bot=self.is_bot)
             guild = await self.get_guild(workspace.workspace_id)
             channels = await guild.fetch_channels()
             channel_id = await self.select_channel(channels, workspace)
             await self.client.logout()
+        else:
+            channel_id = invite["channel"]["id"]
+
+            # discord invite associated to project may not
+            # belong to the server the app is installed on
+            # so select a channel which exists on server
+            if invite["guild"]["id"] != workspace.workspace_id:
+                await self.client.login(os.environ['DISCORD_BOT_TOKEN'], bot=self.is_bot)
+                guild = await self.get_guild(workspace.workspace_id)
+                channels = await guild.fetch_channels()
+                channel_id = await self.select_channel(channels, workspace)
+                await self.client.logout()
 
         return channel_id
 
@@ -144,6 +165,8 @@ class DiscordWorkspaceService(WorkspaceService):
         try:
             channel = await self.get_channel(workspace.project_channel_id)
             async for message in channel.history(limit=5):
+                if message.author.bot:
+                    continue
                 messages.append(message.content)
         except HTTPException as error:
             self.logger.critical(
