@@ -27,31 +27,27 @@ $ pip3 freeze > requirements.txt
 
 ## Docker Development
 
-### Web Service
+[Create a test app](https://api.slack.com/apps). Once created, copy/paste the [docker-compose.env.example](../../../ci/docker-compose.env.example) 
+and rename the new file to `docker-compose.env` (removing .example). Then change the variables to your own application properties.
+
 ```bash
-# build docker image
-$ docker build -t pub-slack-workspace -f ci/slackworkspace.Dockerfile .
+# from repo root
+# docker compose up
+$ docker-compose --file ci/docker-compose.yml up -d
 
-# run container (provide your environment variables), service bus must be test instance running on azure
-$ docker run -d --name pub-slack-workspace -p 5001:80 -e SLACK_SIGNING_SECRET=signing_secret -e SLACK_CLIENT_ID=client_id -e SLACK_CLIENT_SECRET=client_secret -e SLACK_REDIRECT_URI=redirect_uri -e APP_URL=https://projectunicorn.net -e APP_ENV=development -e SERVICE_BUS_CONN_STR=bus_connection_string -e SERVICE_BUS_QUEUE_NAME=queue_name pub-slack-workspace 
+# run alembic migrations to setup db
+$ docker exec -it pub-slack-workspace-bot python3 -m alembic.config -c src/persistence/migrations/alembic.ini upgrade head
 
-# Confirm running by visitng 
-$ open http://localhost:5001/info
+# view app install link via flask app ui
+# app should be installed through a project page via pub ui https://github.com/projectunic0rn/pub
+# installing the app directly is untested and may cause errors
+$ open http://localhost:8003/info
 
-# Stop and remove container
-$ docker rm -f pub-slack-workspace
-```
+# rebuild images on changes
+$ docker-compose --file ci/docker-compose.yml build
 
-### Slack App
-```bash
-# build docker image
-$ docker build -t pub-slack-workspace-bot -f ci/slackworkspacebot.Dockerfile .
-
-# run container (provide your environment variables), service bus must be test instance running on azure
-$ docker run -d --name pub-slack-workspace-bot -e WORKSPACES_CONNECTION_STRING=connection_string DISCORD_BOT_TOKEN=yourlocaldiscordbottoken -e APP_URL=https://projectunicorn.net -e APP_ENV=development -e SERVICE_BUS_CONN_STR=bus_connection_string -e SERVICE_BUS_QUEUE_NAME=queue_name pub-slack-workspace-bot
-
-# Stop and remove container
-$ docker rm -f pub-slack-workspace-bot
+# when done
+$ docker-compose --file ci/docker-compose.yml down
 ```
 
 ## Linting
